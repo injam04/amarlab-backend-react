@@ -7,7 +7,9 @@ class Users extends Component {
     return (
       <div className='row'>
         <div className='col-md-12'>
-          <h1>This is users page</h1>
+          <div className='card card-custom gutter-b'>
+            <div className='card-body'></div>
+          </div>
         </div>
       </div>
     );

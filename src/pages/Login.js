@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { toast } from 'react-toastify';
 import background from '../assets/img/login-bg.jpg';
 import amarlabLogo from '../assets/img/logo.png';
+import axios from 'axios';
+import { AuthContext } from '../context/AuthContext';
 
 class Login extends Component {
   state = {
@@ -9,7 +11,29 @@ class Login extends Component {
     password: '',
   };
 
-  handleLogin = (e) => {
+  loginAjax = (data, handleIsLoggedIn) => {
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}/auth/login/`, data)
+      .then((resp) => {
+        // console.log(resp.data);
+        localStorage.setItem('token', JSON.stringify(resp.data.key));
+        this.props.history.push('/orders');
+        handleIsLoggedIn(true, resp.data.key);
+      })
+      .catch((error) => {
+        if (error.response.status === 400) {
+          toast.error(`${error.response.data.non_field_errors}`, {
+            autoClose: 3000,
+          });
+        } else {
+          toast.error('Sorry something went wrong, please try again later.', {
+            autoClose: 3000,
+          });
+        }
+      });
+  };
+
+  handleLogin = (e, handleIsLoggedIn) => {
     e.preventDefault();
 
     if (this.state.email.trim() === '') {
@@ -26,12 +50,21 @@ class Login extends Component {
         password: this.state.password,
       };
 
-      console.log(postLogin);
+      this.loginAjax(postLogin, handleIsLoggedIn);
+      // console.log(postLogin);
     }
   };
 
+  componentDidMount() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.props.history.push('/');
+    }
+  }
+
   render() {
     const { email, password } = this.state;
+    const { handleIsLoggedIn } = this.context;
 
     return (
       <section className='login_page'>
@@ -66,7 +99,7 @@ class Login extends Component {
                   <form
                     className='form'
                     id='kt_login_signin_form'
-                    onSubmit={this.handleLogin}
+                    onSubmit={(e) => this.handleLogin(e, handleIsLoggedIn)}
                   >
                     <div className='form-group mb-5'>
                       <input
@@ -111,3 +144,5 @@ class Login extends Component {
 }
 
 export default Login;
+
+Login.contextType = AuthContext;

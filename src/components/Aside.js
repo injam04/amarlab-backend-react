@@ -21,6 +21,14 @@ const Aside = () => {
                 <div className='aside-menu min-h-lg-800px' id='kt_aside_menu'>
                   <ul className='menu-nav'>
                     <li className='menu-item'>
+                      <Link to='/' className='menu-link'>
+                        <span className='svg-icon menu-icon'>
+                          <i className='fas fa-home' />
+                        </span>
+                        <span className='menu-text'>Home</span>
+                      </Link>
+                    </li>
+                    <li className='menu-item'>
                       <Link to='/users' className='menu-link'>
                         <span className='svg-icon menu-icon'>
                           <i className='fas fa-users' />

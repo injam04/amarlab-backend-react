@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
+// import { BrowserRouter as Router } from 'react-router-dom';
 import amarlabLogo from '../assets/img/logo.png';
+import Homepage from '../pages/Homepage';
 import Orders from '../pages/Orders';
 import Aside from './Aside';
+import PrivateRoute from './PrivateRoute';
 import Users from './Users';
 
 class MainApp extends Component {
@@ -47,8 +50,9 @@ class MainApp extends Component {
               >
                 <div className='d-flex flex-column-fluid'>
                   <div className='container' style={{ margin: '40px 0' }}>
-                    <Route path='/orders' component={Orders} />
-                    <Route path='/users' component={Users} />
+                    <Route exact path='/' component={Homepage} />
+                    <PrivateRoute path='/orders' component={Orders} />
+                    <PrivateRoute path='/users' component={Users} />
                   </div>
                 </div>
               </div>
