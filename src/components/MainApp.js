@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import { Link, Route } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 // import { BrowserRouter as Router } from 'react-router-dom';
 import amarlabLogo from '../assets/img/logo.png';
+import AddUser from '../pages/AddUser';
+import EditUser from '../pages/EditUser';
 import Homepage from '../pages/Homepage';
+import MyProfile from '../pages/MyProfile';
 import Orders from '../pages/Orders';
 import Aside from './Aside';
 import PrivateRoute from './PrivateRoute';
@@ -53,6 +56,9 @@ class MainApp extends Component {
                     <Route exact path='/' component={Homepage} />
                     <PrivateRoute path='/orders' component={Orders} />
                     <PrivateRoute path='/users' component={Users} />
+                    <PrivateRoute path='/user-add' component={AddUser} />
+                    <PrivateRoute path='/my-profile' component={MyProfile} />
+                    <Route path='/user/:id' component={EditUser} />
                   </div>
                 </div>
               </div>

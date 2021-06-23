@@ -1,6 +1,22 @@
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 const Aside = () => {
+  const handleLogout = (e) => {
+    e.preventDefault();
+
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}/auth/logout/`)
+      .then((resp) => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user_id');
+        window.location.href = '/login';
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  };
+
   return (
     <div
       className='aside aside-left d-flex aside-fixed'
@@ -43,6 +59,23 @@ const Aside = () => {
                         </span>
                         <span className='menu-text'>Orders</span>
                       </Link>
+                    </li>
+                    <li className='menu-item'>
+                      <Link to='/my-profile' className='menu-link'>
+                        <span className='svg-icon menu-icon'>
+                          <i className='fas fa-user'></i>
+                        </span>
+                        <span className='menu-text'>My Profile</span>
+                      </Link>
+                    </li>
+                    <li className='menu-item'>
+                      <a href='?#' className='menu-link' onClick={handleLogout}>
+                        <span className='svg-icon menu-icon'>
+                          <i className='fas fa-power-off'></i>
+                          {/* <i className="fas fa-sign-out-alt"></i> */}
+                        </span>
+                        <span className='menu-text'>Logout</span>
+                      </a>
                     </li>
                   </ul>
                 </div>

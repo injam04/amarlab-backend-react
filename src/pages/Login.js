@@ -11,7 +11,7 @@ class Login extends Component {
     password: '',
   };
 
-  loginAjax = (data, handleIsLoggedIn) => {
+  loginAjax = (data, handleIsLoggedIn, interceptor, setUserId) => {
     axios
       .post(`${process.env.REACT_APP_BASE_URL}/auth/login/`, data)
       .then((resp) => {
@@ -19,6 +19,15 @@ class Login extends Component {
         localStorage.setItem('token', JSON.stringify(resp.data.key));
         this.props.history.push('/orders');
         handleIsLoggedIn(true, resp.data.key);
+        interceptor(resp.data.key);
+
+        axios
+          .get(`${process.env.REACT_APP_BASE_URL}/auth/user/`)
+          .then((resp) => {
+            // console.log(resp.data);
+            setUserId(resp.data.pk);
+            localStorage.setItem('user_id', JSON.stringify(resp.data.pk));
+          });
       })
       .catch((error) => {
         if (error.response.status === 400) {
@@ -33,7 +42,7 @@ class Login extends Component {
       });
   };
 
-  handleLogin = (e, handleIsLoggedIn) => {
+  handleLogin = (e, handleIsLoggedIn, interceptor, setUserId) => {
     e.preventDefault();
 
     if (this.state.email.trim() === '') {
@@ -50,7 +59,7 @@ class Login extends Component {
         password: this.state.password,
       };
 
-      this.loginAjax(postLogin, handleIsLoggedIn);
+      this.loginAjax(postLogin, handleIsLoggedIn, interceptor, setUserId);
       // console.log(postLogin);
     }
   };
@@ -64,7 +73,7 @@ class Login extends Component {
 
   render() {
     const { email, password } = this.state;
-    const { handleIsLoggedIn } = this.context;
+    const { handleIsLoggedIn, interceptor, setUserId } = this.context;
 
     return (
       <section className='login_page'>
@@ -99,7 +108,14 @@ class Login extends Component {
                   <form
                     className='form'
                     id='kt_login_signin_form'
-                    onSubmit={(e) => this.handleLogin(e, handleIsLoggedIn)}
+                    onSubmit={(e) =>
+                      this.handleLogin(
+                        e,
+                        handleIsLoggedIn,
+                        interceptor,
+                        setUserId
+                      )
+                    }
                   >
                     <div className='form-group mb-5'>
                       <input
