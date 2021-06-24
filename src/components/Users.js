@@ -30,19 +30,12 @@ class Users extends Component {
       });
   };
 
-  groupIdToName = () => {
-    // console.log(this.state.group);
-    const groupName = this.state.group
-      .filter((group) => {
-        return group.id === 3;
-      })
-      .map((item) => {
-        return [item.name, 'dsdssd'];
-      });
-    const name = groupName[0];
-    var ary = ['first', 'second', 'third', 'fourth', 'fifth'];
-    console.log(name[0]);
-    console.log(ary);
+  groupIdToName = (grp_id) => {
+    const array = this.state.group.filter((group) => {
+      return group.id === grp_id;
+    });
+    const name = array[0];
+    return name ? name.name : 'No role';
   };
 
   componentDidMount() {
@@ -73,7 +66,6 @@ class Users extends Component {
   };
 
   render() {
-    // this.groupIdToName();
     const { users, user_id } = this.state;
 
     return (
@@ -128,14 +120,9 @@ class Users extends Component {
                               {user.username || ''}
                             </h1>
                           </td>
-                          <td className='text-right'>
+                          <td className='text-center'>
                             <span className='text-muted font-weight-bold d-block'>
-                              {/* {user.groups.length !== 0
-                                ? user.groups[0].name
-                                : 'no role'} */}
-                              {user.groups.length !== 0
-                                ? user.groups[0]
-                                : 'no role'}
+                              {this.groupIdToName(user.groups[0])}
                             </span>
                           </td>
                           <td className='text-right'>

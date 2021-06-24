@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import { toast } from 'react-toastify';
 
 class EditUser extends Component {
   state = {
@@ -9,8 +10,10 @@ class EditUser extends Component {
     first_name: '',
     last_name: '',
     password: '',
+    username: '',
     user_group: '',
     is_active: false,
+    newPassword: '',
   };
 
   fetchGroup = () => {
@@ -27,6 +30,12 @@ class EditUser extends Component {
     if (!token) {
       this.props.history.push('/login');
     } else {
+      axios.interceptors.request.use((config) => {
+        const tokehjjhhn = 'Token ' + JSON.parse(token);
+        config.headers.Authorization = tokehjjhhn;
+        return config;
+      });
+
       this.fetchGroup();
       const params = this.props.match.params.id;
 
@@ -42,10 +51,12 @@ class EditUser extends Component {
             this.setState({ email: resp.data.email });
             this.setState({
               user_group:
-                resp.data.groups.length !== 0 ? resp.data.groups[0].name : '',
+                resp.data.groups.length !== 0 ? resp.data.groups[0] : '',
             });
             this.setState({ is_active: resp.data.is_active });
             this.setState({ userId: resp.data.id });
+            this.setState({ username: resp.data.username });
+            this.setState({ password: resp.data.password });
           });
       }
     }
@@ -59,20 +70,61 @@ class EditUser extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
 
-    const postUser = {
-      email: this.state.email,
-      first_name: this.state.first_name,
-      last_name: this.state.last_name,
-      is_staff: true,
-      is_active: this.state.is_active,
-      is_superuser: this.state.user_group === 'Admin' ? true : false,
-      password: this.state.password,
-      // groups: '',
-      groups: [{ name: this.state.user_group }],
-      // groups: [this.state.user_group],
+    const ajaxPut = (data) => {
+      axios
+        .put(
+          `${process.env.REACT_APP_BASE_URL}/user_management/user/${this.state.userId}/`,
+          data
+        )
+        .then((resp) => {
+          // console.log(resp.data);
+          toast.success(`User profile updated successfully.`, {
+            autoClose: 3000,
+          });
+          this.props.history.push('/users');
+        })
+        .catch((error) => console.log(error.response));
     };
 
-    console.log(postUser);
+    let strToInt;
+    const typeCheck = typeof this.state.user_group;
+    if (typeCheck === 'string') {
+      strToInt = parseInt(this.state.user_group);
+    } else {
+      strToInt = this.state.user_group;
+    }
+
+    if (this.state.newPassword.trim() !== '') {
+      const putUser = {
+        username: this.state.username,
+        email: this.state.email,
+        first_name: this.state.first_name,
+        last_name: this.state.last_name,
+        is_staff: true,
+        is_active: this.state.is_active,
+        is_superuser: strToInt === 1 ? true : false,
+        password: this.state.newPassword,
+        groups: [strToInt],
+      };
+
+      // console.log(putUser);
+      ajaxPut(putUser);
+    } else {
+      const putUser = {
+        username: this.state.username,
+        email: this.state.email,
+        first_name: this.state.first_name,
+        last_name: this.state.last_name,
+        is_staff: true,
+        is_active: this.state.is_active,
+        is_superuser: strToInt === 1 ? true : false,
+        password: this.state.password,
+        groups: [strToInt],
+      };
+
+      // console.log(putUser);
+      ajaxPut(putUser);
+    }
   };
 
   render() {
@@ -82,9 +134,10 @@ class EditUser extends Component {
       email,
       first_name,
       last_name,
-      password,
       is_active,
       user_group,
+      username,
+      newPassword,
     } = this.state;
 
     return (
@@ -97,6 +150,22 @@ class EditUser extends Component {
                   Edit User :
                 </h5>
                 <form onSubmit={this.handleSubmit}>
+                  <div className='form-group row fv-plugins-icon-container'>
+                    <label className='col-xl-3 col-lg-3 col-form-label'>
+                      Username
+                    </label>
+                    <div className='col-lg-9 col-xl-9'>
+                      <input
+                        className='form-control form-control-solid form-control-lg'
+                        type='text'
+                        value={username}
+                        onChange={(e) =>
+                          this.setState({ username: e.target.value })
+                        }
+                      />
+                      <div className='fv-plugins-message-container' />
+                    </div>
+                  </div>
                   <div className='form-group row fv-plugins-icon-container'>
                     <label className='col-xl-3 col-lg-3 col-form-label'>
                       First Name
@@ -153,9 +222,9 @@ class EditUser extends Component {
                       <input
                         className='form-control form-control-solid form-control-lg'
                         type='text'
-                        value={password}
+                        value={newPassword}
                         onChange={(e) =>
-                          this.setState({ password: e.target.value })
+                          this.setState({ newPassword: e.target.value })
                         }
                       />
                       <div className='fv-plugins-message-container' />
@@ -174,7 +243,7 @@ class EditUser extends Component {
                         <option value=''>User Role</option>
                         {group.length !== 0 &&
                           group.map((group, i) => (
-                            <option key={i} value={group.name}>
+                            <option key={i} value={group.id}>
                               {group.name}
                             </option>
                           ))}
