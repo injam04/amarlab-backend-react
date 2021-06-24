@@ -7,19 +7,47 @@ class Users extends Component {
   state = {
     users: [],
     user_id: null,
+    group: [],
   };
 
   fetchUsers = () => {
     axios
-      .get(`${process.env.REACT_APP_BASE_URL}/user_management/user/`)
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/user_management/user/?page=1&limit=10&ofset=0`
+      )
       .then((resp) => {
-        // console.log(resp.data);
+        // console.log(resp.data.results);
         this.setState({ users: resp.data.results });
       });
   };
 
+  fetchGroup = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}/user_management/group/`)
+      .then((resp) => {
+        // console.log(resp.data.results);
+        this.setState({ group: resp.data.results });
+      });
+  };
+
+  groupIdToName = () => {
+    // console.log(this.state.group);
+    const groupName = this.state.group
+      .filter((group) => {
+        return group.id === 3;
+      })
+      .map((item) => {
+        return [item.name, 'dsdssd'];
+      });
+    const name = groupName[0];
+    var ary = ['first', 'second', 'third', 'fourth', 'fifth'];
+    console.log(name[0]);
+    console.log(ary);
+  };
+
   componentDidMount() {
     this.fetchUsers();
+    this.fetchGroup();
     const user_id = localStorage.getItem('user_id');
     if (user_id) {
       this.setState({ user_id: JSON.parse(user_id) });
@@ -34,7 +62,10 @@ class Users extends Component {
         `${process.env.REACT_APP_BASE_URL}/user_management/user/${user.id}/`
       )
       .then((resp) => {
-        console.log(resp.data);
+        // console.log(resp.data);
+        this.setState({
+          users: this.state.users.filter((use) => use.id !== user.id),
+        });
       })
       .catch((error) => {
         console.log(error.response);
@@ -42,6 +73,7 @@ class Users extends Component {
   };
 
   render() {
+    // this.groupIdToName();
     const { users, user_id } = this.state;
 
     return (
@@ -92,13 +124,18 @@ class Users extends Component {
                           </td>
                           <td className='pl-0'>
                             <h1 className='text-dark font-weight-bolder mb-0 font-size-lg'>
-                              Injamamul Haque
-                              {/* {user.first_name && user.last_name } */}
+                              {/* Injamamul Haque */}
+                              {user.username || ''}
                             </h1>
                           </td>
                           <td className='text-right'>
                             <span className='text-muted font-weight-bold d-block'>
-                              Order Manager
+                              {/* {user.groups.length !== 0
+                                ? user.groups[0].name
+                                : 'no role'} */}
+                              {user.groups.length !== 0
+                                ? user.groups[0]
+                                : 'no role'}
                             </span>
                           </td>
                           <td className='text-right'>

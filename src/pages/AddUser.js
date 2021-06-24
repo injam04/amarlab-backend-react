@@ -1,10 +1,12 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import { toast } from 'react-toastify';
 
 class AddUser extends Component {
   state = {
     group: [],
     email: '',
+    username: '',
     first_name: '',
     last_name: '',
     password: '',
@@ -34,37 +36,104 @@ class AddUser extends Component {
   handleSubmit = (e) => {
     e.preventDefault();
 
-    const postUser = {
-      email: this.state.email,
-      first_name: this.state.first_name,
-      last_name: this.state.last_name,
-      is_staff: true,
-      is_active: this.state.is_active,
-      is_superuser: this.state.user_group === 'Admin' ? true : false,
-      password: this.state.password,
-      // groups: '',
-      groups: [{ name: this.state.user_group }],
-      // groups: [this.state.user_group],
-    };
-
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}/user_management/user/`, postUser)
-      .then((resp) => {
-        console.log(resp.data);
-      })
-      .catch((error) => {
-        console.log(error.response);
+    if (this.state.username.trim() === '') {
+      toast.error(`Please enter a username.`, {
+        autoClose: 3000,
       });
+    } else if (this.state.password.trim() === '') {
+      toast.error(`Please enter a password.`, {
+        autoClose: 3000,
+      });
+    } else if (this.state.user_group === '') {
+      toast.error(`Please select a role.`, {
+        autoClose: 3000,
+      });
+    } else {
+      const strToInt = parseInt(this.state.user_group);
 
-    // console.log(postUser);
-    // const group = [{ name: this.state.user_group }];
+      const postUser = {
+        email: this.state.email,
+        username: this.state.username,
+        first_name: this.state.first_name,
+        last_name: this.state.last_name,
+        is_staff: true,
+        is_active: this.state.is_active,
+        is_superuser: this.state.user_group === '1' ? true : false,
+        password: this.state.password,
+        groups: [strToInt],
+      };
 
-    // console.log(group);
+      axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/user_management/user/`,
+          postUser
+        )
+        .then((resp) => {
+          // console.log(resp.data);
+
+          const postPatient = {
+            is_account: true,
+            user: resp.data.id,
+            full_name: `${resp.data.first_name} ${resp.data.last_name}`,
+            email: resp.data.email,
+          };
+
+          axios
+            .post(
+              `${process.env.REACT_APP_BASE_URL}/user_management/patient/`,
+              postPatient
+            )
+            .then((resp) => {
+              toast.success(`User added successfully.`, {
+                autoClose: 3000,
+              });
+              this.props.history.push('/users');
+            });
+        })
+        .catch((error) => {
+          // console.log(error.response);
+          if (error.response.status === 400) {
+            if (error.response.data.username) {
+              toast.error(`${error.response.data.username}`, {
+                autoClose: 3000,
+              });
+            } else if (error.response.data.email) {
+              toast.error(`${error.response.data.email}`, {
+                autoClose: 3000,
+              });
+            } else if (error.response.data.password) {
+              toast.error(`${error.response.data.password}`, {
+                autoClose: 3000,
+              });
+            } else {
+              toast.error(
+                'Sorry something went wrong, please try again later.',
+                {
+                  autoClose: 3000,
+                }
+              );
+            }
+          } else {
+            toast.error('Sorry something went wrong, please try again later.', {
+              autoClose: 3000,
+            });
+          }
+        });
+
+      // console.log(postUser);
+    }
   };
 
   render() {
-    const { group, email, first_name, last_name, password, is_active } =
-      this.state;
+    const {
+      group,
+      email,
+      username,
+      first_name,
+      last_name,
+      password,
+      is_active,
+    } = this.state;
 
     return (
       <div className='row'>
@@ -76,6 +145,22 @@ class AddUser extends Component {
                   User's Details:
                 </h5>
                 <form onSubmit={this.handleSubmit}>
+                  <div className='form-group row fv-plugins-icon-container'>
+                    <label className='col-xl-3 col-lg-3 col-form-label'>
+                      Username
+                    </label>
+                    <div className='col-lg-9 col-xl-9'>
+                      <input
+                        className='form-control form-control-solid form-control-lg'
+                        type='text'
+                        value={username}
+                        onChange={(e) =>
+                          this.setState({ username: e.target.value })
+                        }
+                      />
+                      <div className='fv-plugins-message-container' />
+                    </div>
+                  </div>
                   <div className='form-group row fv-plugins-icon-container'>
                     <label className='col-xl-3 col-lg-3 col-form-label'>
                       First Name
@@ -153,7 +238,7 @@ class AddUser extends Component {
                         <option value=''>User Role</option>
                         {group.length !== 0 &&
                           group.map((group, i) => (
-                            <option key={i} value={group.name}>
+                            <option key={i} value={group.id}>
                               {group.name}
                             </option>
                           ))}

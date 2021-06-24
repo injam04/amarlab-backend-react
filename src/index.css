@@ -54,3 +54,10 @@ body {
     max-width: 100%;
   }
 }
+
+/* Aside */
+@media only screen and (max-width: 991.98px) {
+  .aside-secondary-enabled .aside {
+    width: 200px !important;
+  }
+}

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 // import { BrowserRouter as Router } from 'react-router-dom';
 import amarlabLogo from '../assets/img/logo.png';
 import AddUser from '../pages/AddUser';
@@ -12,26 +12,35 @@ import PrivateRoute from './PrivateRoute';
 import Users from './Users';
 
 class MainApp extends Component {
-  state = {};
+  state = {
+    asideOpen: false,
+  };
+
+  setAsideClose = () => {
+    this.setState({ asideOpen: false });
+  };
 
   render() {
+    const { asideOpen } = this.state;
+
     return (
       <div
         id='kt_body'
         className='header-mobile-fixed subheader-enabled aside-enabled aside-fixed aside-secondary-enabled'
       >
         <div id='kt_header_mobile' className='header-mobile'>
-          <a href='?#'>
+          <Link to='/'>
             <img
               alt='Logo'
               src={amarlabLogo}
               className='logo-default max-h-30px'
             />
-          </a>
+          </Link>
           <div className='d-flex align-items-center'>
             <button
               className='btn p-0 burger-icon burger-icon-left'
               id='kt_aside_mobile_toggle'
+              onClick={() => this.setState({ asideOpen: !asideOpen })}
             >
               <span />
             </button>
@@ -40,7 +49,10 @@ class MainApp extends Component {
 
         <div className='d-flex flex-column flex-root'>
           <div className='d-flex flex-row flex-column-fluid page'>
-            <Aside />
+            <Aside
+              asideOpen={this.state.asideOpen}
+              setAsideClose={this.setAsideClose}
+            />
 
             <div
               className='d-flex flex-column flex-row-fluid wrapper'
