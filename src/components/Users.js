@@ -45,9 +45,10 @@ class Users extends Component {
   componentDidMount() {
     this.fetchUsers();
     this.fetchGroup();
-    const user_id = localStorage.getItem('user_id');
-    if (user_id) {
-      this.setState({ user_id: JSON.parse(user_id) });
+    const user_details = localStorage.getItem('user_details');
+    if (user_details) {
+      const user = JSON.parse(user_details);
+      this.setState({ user_id: user.pk });
     }
   }
 

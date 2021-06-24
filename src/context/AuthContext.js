@@ -7,16 +7,12 @@ class AuthContextProvider extends Component {
   state = {
     isLoggedIn: false,
     apiKey: null,
-    user_id: null,
+    user_details: null,
   };
 
   handleIsLoggedIn = (value, key) => {
     this.setState({ isLoggedIn: value });
     this.setState({ apiKey: key });
-  };
-
-  setUserId = (id) => {
-    this.setState({ user_id: id });
   };
 
   interceptor = (key) => {
@@ -27,6 +23,10 @@ class AuthContextProvider extends Component {
     });
   };
 
+  setUserDetails = (data) => {
+    this.setState({ user_details: data });
+  };
+
   componentDidMount() {
     const token = localStorage.getItem('token');
 
@@ -34,6 +34,11 @@ class AuthContextProvider extends Component {
       this.setState({ apiKey: JSON.parse(token) });
       this.setState({ isLoggedIn: true });
       this.interceptor(JSON.parse(token));
+    }
+
+    const user_details = localStorage.getItem('user_details');
+    if (user_details) {
+      this.setState({ user_details: JSON.parse(user_details) });
     }
   }
 
@@ -44,7 +49,7 @@ class AuthContextProvider extends Component {
           ...this.state,
           handleIsLoggedIn: this.handleIsLoggedIn,
           interceptor: this.interceptor,
-          setUserId: this.setUserId,
+          setUserDetails: this.setUserDetails,
         }}
       >
         {this.props.children}

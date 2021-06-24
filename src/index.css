@@ -60,6 +60,9 @@ body {
   .aside-secondary-enabled .aside {
     width: 200px !important;
   }
+  .header-mobile-fixed .header-mobile {
+    width: 100vw;
+  }
 }
 
 /* Delete Confirmation */
@@ -83,4 +86,28 @@ body {
 .delete_confirmation .buttons button {
   width: 80px;
   font-size: 16px;
+}
+
+/* Top Heading */
+#kt_header {
+  background-color: #fff;
+  padding: 15px 0;
+  padding-bottom: 7px;
+}
+
+#kt_header .dropdown button {
+  background-color: transparent;
+  border-color: transparent;
+  color: #000;
+  padding: 0;
+  font-size: 0;
+}
+
+#kt_header .dropdown button i {
+  color: #000;
+}
+
+#kt_header h5.welcome_text {
+  padding-top: 1px;
+  color: #000;
 }

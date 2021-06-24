@@ -38,8 +38,9 @@ class MyProfile extends Component {
         autoClose: 3000,
       });
     } else {
-      const user_id = localStorage.getItem('user_id');
-      const id = JSON.parse(user_id);
+      const user_details = localStorage.getItem('user_details');
+      const user = JSON.parse(user_details);
+      const id = user.pk;
 
       const ajaxPut = (data) => {
         axios
@@ -80,10 +81,10 @@ class MyProfile extends Component {
   };
 
   componentDidMount() {
-    const user_id = localStorage.getItem('user_id');
-    if (user_id) {
-      //   console.log('stay in page');
-      this.fetchUsers(JSON.parse(user_id));
+    const user_details = localStorage.getItem('user_details');
+    if (user_details) {
+      const user = JSON.parse(user_details);
+      this.fetchUsers(user.pk);
     } else {
       console.log('Logout');
     }

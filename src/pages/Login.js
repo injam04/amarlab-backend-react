@@ -11,7 +11,7 @@ class Login extends Component {
     password: '',
   };
 
-  loginAjax = (data, handleIsLoggedIn, interceptor, setUserId) => {
+  loginAjax = (data, handleIsLoggedIn, interceptor, setUserDetails) => {
     axios
       .post(`${process.env.REACT_APP_BASE_URL}/auth/login/`, data)
       .then((resp) => {
@@ -25,8 +25,8 @@ class Login extends Component {
           .get(`${process.env.REACT_APP_BASE_URL}/auth/user/`)
           .then((resp) => {
             // console.log(resp.data);
-            setUserId(resp.data.pk);
-            localStorage.setItem('user_id', JSON.stringify(resp.data.pk));
+            setUserDetails(resp.data);
+            localStorage.setItem('user_details', JSON.stringify(resp.data));
           });
       })
       .catch((error) => {
@@ -42,7 +42,7 @@ class Login extends Component {
       });
   };
 
-  handleLogin = (e, handleIsLoggedIn, interceptor, setUserId) => {
+  handleLogin = (e, handleIsLoggedIn, interceptor, setUserDetails) => {
     e.preventDefault();
 
     if (this.state.email.trim() === '') {
@@ -59,7 +59,7 @@ class Login extends Component {
         password: this.state.password,
       };
 
-      this.loginAjax(postLogin, handleIsLoggedIn, interceptor, setUserId);
+      this.loginAjax(postLogin, handleIsLoggedIn, interceptor, setUserDetails);
       // console.log(postLogin);
     }
   };
@@ -73,7 +73,7 @@ class Login extends Component {
 
   render() {
     const { email, password } = this.state;
-    const { handleIsLoggedIn, interceptor, setUserId } = this.context;
+    const { handleIsLoggedIn, interceptor, setUserDetails } = this.context;
 
     return (
       <section className='login_page'>
@@ -113,7 +113,7 @@ class Login extends Component {
                         e,
                         handleIsLoggedIn,
                         interceptor,
-                        setUserId
+                        setUserDetails
                       )
                     }
                   >

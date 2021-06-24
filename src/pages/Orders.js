@@ -4,16 +4,18 @@ import React, { Component } from 'react';
 class Orders extends Component {
   state = {
     orders: [],
+    orderCount: null,
   };
 
   fetchOrders = () => {
     axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/order/order/?page=1&limit=10&ofset=0`
+        `${process.env.REACT_APP_BASE_URL}/order/order-tree/?page=1&limit=10&ofset=0`
       )
       .then((resp) => {
         // console.log(resp.data);
         this.setState({ orders: resp.data.results });
+        this.setState({ orderCount: resp.data.count });
       });
   };
 
@@ -22,6 +24,8 @@ class Orders extends Component {
   }
 
   render() {
+    const { orders, orderCount } = this.state;
+
     return (
       <div className='row'>
         <div className='col-md-12'>
@@ -32,7 +36,7 @@ class Orders extends Component {
                   All Orders
                 </span>
                 <span className='text-muted mt-3 font-weight-bold font-size-sm'>
-                  More than 0+ orders
+                  More than {orderCount || ''}+ orders
                 </span>
               </h3>
             </div>

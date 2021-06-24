@@ -1,22 +1,6 @@
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 
 const Aside = ({ asideOpen, setAsideClose }) => {
-  const handleLogout = (e) => {
-    e.preventDefault();
-
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}/auth/logout/`)
-      .then((resp) => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user_id');
-        window.location.href = '/login';
-      })
-      .catch((error) => {
-        console.log(error.response);
-      });
-  };
-
   return (
     <div
       className={`aside aside-left d-flex aside-fixed ${
@@ -52,18 +36,6 @@ const Aside = ({ asideOpen, setAsideClose }) => {
                     </li>
                     <li className='menu-item'>
                       <Link
-                        to='/users'
-                        className='menu-link'
-                        onClick={() => setAsideClose()}
-                      >
-                        <span className='svg-icon menu-icon'>
-                          <i className='fas fa-users' />
-                        </span>
-                        <span className='menu-text'>Users</span>
-                      </Link>
-                    </li>
-                    <li className='menu-item'>
-                      <Link
                         to='/orders'
                         className='menu-link'
                         onClick={() => setAsideClose()}
@@ -76,6 +48,19 @@ const Aside = ({ asideOpen, setAsideClose }) => {
                     </li>
                     <li className='menu-item'>
                       <Link
+                        to='/users'
+                        className='menu-link'
+                        onClick={() => setAsideClose()}
+                      >
+                        <span className='svg-icon menu-icon'>
+                          <i className='fas fa-users' />
+                        </span>
+                        <span className='menu-text'>Users</span>
+                      </Link>
+                    </li>
+
+                    {/* <li className='menu-item'>
+                      <Link
                         to='/my-profile'
                         className='menu-link'
                         onClick={() => setAsideClose()}
@@ -85,16 +70,15 @@ const Aside = ({ asideOpen, setAsideClose }) => {
                         </span>
                         <span className='menu-text'>My Profile</span>
                       </Link>
-                    </li>
-                    <li className='menu-item'>
+                    </li> */}
+                    {/* <li className='menu-item'>
                       <a href='?#' className='menu-link' onClick={handleLogout}>
                         <span className='svg-icon menu-icon'>
                           <i className='fas fa-power-off'></i>
-                          {/* <i className="fas fa-sign-out-alt"></i> */}
                         </span>
                         <span className='menu-text'>Logout</span>
                       </a>
-                    </li>
+                    </li> */}
                   </ul>
                 </div>
               </div>
