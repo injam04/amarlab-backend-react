@@ -8,6 +8,8 @@ class MyProfile extends Component {
     first_name: '',
     last_name: '',
     password: '',
+    username: '',
+    newPassword: '',
     isEditable: false,
   };
 
@@ -15,11 +17,12 @@ class MyProfile extends Component {
     axios
       .get(`${process.env.REACT_APP_BASE_URL}/user_management/user/${id}`)
       .then((resp) => {
-        console.log(resp.data);
+        // console.log(resp.data);
         this.setState({ first_name: resp.data.first_name });
         this.setState({ last_name: resp.data.last_name });
         this.setState({ email: resp.data.email });
-        // this.setState({ password: resp.data.password });
+        this.setState({ username: resp.data.username });
+        this.setState({ password: resp.data.password });
       });
   };
 
@@ -27,36 +30,52 @@ class MyProfile extends Component {
     e.preventDefault();
 
     if (this.state.first_name.trim() === '') {
-      toast.success(`Firstname can not be empty.`, {
+      toast.error(`Firstname can not be empty.`, {
         autoClose: 3000,
       });
     } else if (this.state.last_name.trim() === '') {
-      toast.success(`Lastname can not be empty.`, {
-        autoClose: 3000,
-      });
-    } else if (this.state.password.trim() === '') {
-      toast.success(`Password can not be empty.`, {
+      toast.error(`Lastname can not be empty.`, {
         autoClose: 3000,
       });
     } else {
       const user_id = localStorage.getItem('user_id');
       const id = JSON.parse(user_id);
 
-      const putData = {
-        first_name: this.state.first_name,
-        last_name: this.state.last_name,
-        password: this.state.password,
+      const ajaxPut = (data) => {
+        axios
+          .put(
+            `${process.env.REACT_APP_BASE_URL}/user_management/user/${id}/`,
+            data
+          )
+          .then((resp) => {
+            // console.log(resp.data);
+            toast.success(`Profile updated successfully.`, {
+              autoClose: 3000,
+            });
+            this.props.history.push('/');
+          })
+          .catch((error) => console.log(error.response));
       };
 
-      axios
-        .put(
-          `${process.env.REACT_APP_BASE_URL}/user_management/user/${id}/`,
-          putData
-        )
-        .then((resp) => {
-          console.log(resp.data);
-        })
-        .catch((error) => console.log(error.response));
+      if (this.state.newPassword.trim() === '') {
+        const putData = {
+          first_name: this.state.first_name,
+          last_name: this.state.last_name,
+          username: this.state.username,
+          password: this.state.password,
+        };
+        // console.log(putData);
+        ajaxPut(putData);
+      } else {
+        const putData = {
+          first_name: this.state.first_name,
+          last_name: this.state.last_name,
+          password: this.state.newPassword,
+          username: this.state.username,
+        };
+        // console.log(putData);
+        ajaxPut(putData);
+      }
     }
   };
 
@@ -71,7 +90,8 @@ class MyProfile extends Component {
   }
 
   render() {
-    const { first_name, last_name, email, password, isEditable } = this.state;
+    const { first_name, last_name, email, newPassword, isEditable, username } =
+      this.state;
 
     return (
       <div className='row'>
@@ -91,6 +111,20 @@ class MyProfile extends Component {
                   </button>
                 </div>
                 <form onSubmit={this.handleSubmit}>
+                  <div className='form-group row fv-plugins-icon-container'>
+                    <label className='col-xl-3 col-lg-3 col-form-label'>
+                      Username
+                    </label>
+                    <div className='col-lg-9 col-xl-9'>
+                      <input
+                        className='form-control form-control-solid form-control-lg'
+                        type='text'
+                        value={username}
+                        disabled
+                      />
+                      <div className='fv-plugins-message-container' />
+                    </div>
+                  </div>
                   <div className='form-group row fv-plugins-icon-container'>
                     <label className='col-xl-3 col-lg-3 col-form-label'>
                       First Name
@@ -150,9 +184,9 @@ class MyProfile extends Component {
                       <input
                         className='form-control form-control-solid form-control-lg'
                         type='text'
-                        value={password}
+                        value={newPassword}
                         onChange={(e) =>
-                          this.setState({ password: e.target.value })
+                          this.setState({ newPassword: e.target.value })
                         }
                         disabled={isEditable ? '' : 'disabled'}
                       />
