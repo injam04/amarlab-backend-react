@@ -1,13 +1,17 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import { Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-// import blank from '../assets/img/blank.png';
+import { toast } from 'react-toastify';
+import warningLogo from '../assets/img/warning.svg';
 
 class Users extends Component {
   state = {
     users: [],
     user_id: null,
     group: [],
+    showModal: false,
+    deleteId: null,
   };
 
   fetchUsers = () => {
@@ -50,14 +54,39 @@ class Users extends Component {
   deleteUser = (user) => {
     // console.log(user.id);
 
+    this.setState({ showModal: !this.state.showModal });
+    this.setState({ deleteId: user.id });
+
+    // axios
+    //   .delete(
+    //     `${process.env.REACT_APP_BASE_URL}/user_management/user/${user.id}/`
+    //   )
+    //   .then((resp) => {
+    //     // console.log(resp.data);
+    //     this.setState({
+    //       users: this.state.users.filter((use) => use.id !== user.id),
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     console.log(error.response);
+    //   });
+  };
+
+  handleModalDlt = () => {
+    // console.log(this.state.deleteId);
     axios
       .delete(
-        `${process.env.REACT_APP_BASE_URL}/user_management/user/${user.id}/`
+        `${process.env.REACT_APP_BASE_URL}/user_management/user/${this.state.deleteId}/`
       )
       .then((resp) => {
-        // console.log(resp.data);
         this.setState({
-          users: this.state.users.filter((use) => use.id !== user.id),
+          users: this.state.users.filter(
+            (use) => use.id !== this.state.deleteId
+          ),
+        });
+        this.setState({ showModal: false });
+        toast.success(`User deleted successfully.`, {
+          autoClose: 3000,
         });
       })
       .catch((error) => {
@@ -66,7 +95,7 @@ class Users extends Component {
   };
 
   render() {
-    const { users, user_id } = this.state;
+    const { users, user_id, showModal } = this.state;
 
     return (
       <div className='row'>
@@ -200,6 +229,38 @@ class Users extends Component {
             </div>
           </div>
         </div>
+
+        <Modal
+          show={showModal}
+          onHide={() => this.setState({ showModal: !showModal })}
+          animation={false}
+          centered
+          className='delete_confirmation'
+        >
+          <div className='modal-body mx-auto'>
+            <p className='text-center icon mb-0'>
+              <img src={warningLogo} alt='' />
+            </p>
+            <div className='details'>
+              <h5>Are you sure?</h5>
+              <p>Once delete, it will be permanently deleted.</p>
+            </div>
+            <p className='buttons mb-0 text-center'>
+              <button
+                className='btn btn-primary mr-1'
+                onClick={() => this.setState({ showModal: !showModal })}
+              >
+                No
+              </button>
+              <button
+                className='btn btn-danger ml-1'
+                onClick={this.handleModalDlt}
+              >
+                Yes
+              </button>
+            </p>
+          </div>
+        </Modal>
       </div>
     );
   }
