@@ -12,6 +12,9 @@ class Users extends Component {
     group: [],
     showModal: false,
     deleteId: null,
+    next: null,
+    offset: 10,
+    limit: 10,
   };
 
   fetchUsers = () => {
@@ -20,8 +23,9 @@ class Users extends Component {
         `${process.env.REACT_APP_BASE_URL}/user_management/user/?page=1&limit=10&ofset=0`
       )
       .then((resp) => {
-        // console.log(resp.data.results);
+        // console.log(resp.data);
         this.setState({ users: resp.data.results });
+        this.setState({ next: resp.data.next });
       });
   };
 
@@ -95,8 +99,22 @@ class Users extends Component {
       });
   };
 
+  loadMore = () => {
+    this.setState({ offset: this.state.offset + 10 });
+
+    axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/user_management/user/?limit=${this.state.limit}&offset=${this.state.offset}&ofset=0&page=1`
+      )
+      .then((resp) => {
+        // console.log(resp.data);
+        this.setState({ users: [...this.state.users, ...resp.data.results] });
+        this.setState({ next: resp.data.next });
+      });
+  };
+
   render() {
-    const { users, user_id, showModal } = this.state;
+    const { users, user_id, showModal, next } = this.state;
 
     return (
       <div className='row'>
@@ -227,6 +245,15 @@ class Users extends Component {
                   </tbody>
                 </table>
               </div>
+              <p className='text-center mb-15 mt-5'>
+                <button
+                  className='btn btn-primary btn-sm mb-0'
+                  disabled={next ? '' : 'disabled'}
+                  onClick={this.loadMore}
+                >
+                  SHow More
+                </button>
+              </p>
             </div>
           </div>
         </div>

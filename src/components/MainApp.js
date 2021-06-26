@@ -9,6 +9,7 @@ import EditUser from '../pages/EditUser';
 import Homepage from '../pages/Homepage';
 import MyProfile from '../pages/MyProfile';
 import Orders from '../pages/Orders';
+import OrderDetails from '../pages/OrderDetails';
 import Aside from './Aside';
 import PrivateRoute from './PrivateRoute';
 import Users from './Users';
@@ -121,6 +122,7 @@ class MainApp extends Component {
                     <PrivateRoute path='/user-add' component={AddUser} />
                     <PrivateRoute path='/my-profile' component={MyProfile} />
                     <Route path='/user/:id' component={EditUser} />
+                    <Route path='/order/:id' component={OrderDetails} />
                   </div>
                 </div>
               </div>

@@ -121,7 +121,7 @@ class Login extends Component {
                       <input
                         className='form-control h-auto form-control-solid py-4 px-8'
                         type='text'
-                        placeholder='Email'
+                        placeholder='Username'
                         name='username'
                         autoComplete='off'
                         value={email}
