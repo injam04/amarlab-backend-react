@@ -86,11 +86,11 @@ class MainApp extends Component {
                 // style={{ backgroundColor: '#fff', padding: '15px 0' }}
               >
                 <div className='container-fluid d-flex align-items-stretch justify-content-end'>
-                  {/* <h5 className='welcome_text mb-0 mr-2'>Welcome </h5> */}
+                  <h5 className='welcome_text mb-0 mr-2'>Welcome </h5>
                   <Dropdown>
                     <DropdownToggle>
                       <h5 className='mb-0 d-flex'>
-                        Welcome {user_details ? user_details.username : ''}{' '}
+                        {user_details ? user_details.username : ''}{' '}
                         <i className='fas fa-sort-down ml-1'></i>
                       </h5>
                     </DropdownToggle>

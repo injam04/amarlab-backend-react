@@ -111,9 +111,9 @@ body {
   margin-bottom: 0;
 }
 
-.order-history .single .header .right p span {
+/* .order-history .single .header .right p span {
   margin-left: 15px;
-}
+} */
 
 .order-history .single .footer .left {
   margin-bottom: 0;
@@ -124,13 +124,9 @@ body {
   font-weight: 600;
 }
 
-.order-history .single .footer .right button {
-  font-size: 16px;
-  font-weight: 600;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  width: 144px;
-  border-radius: 7px !important;
+.order-history .single .footer .right a {
+  width: 100%;
+  margin-top: 5px;
 }
 
 .order-history .single.unpaid .footer .right button.pay {
@@ -469,4 +465,92 @@ body {
 #kt_header h5.welcome_text {
   padding-top: 1px;
   color: #000;
+}
+
+/*=========================== Medai Queries ================================*/
+
+/*=========================== Order ===========================*/
+@media only screen and (max-width: 767px) {
+  .order-history {
+    padding-top: 45px;
+    padding-bottom: 75px;
+  }
+  .order-history h5.main-heading {
+    margin-bottom: 20px;
+  }
+  .order-history .single {
+    padding: 22px;
+  }
+  .order-history .single .header,
+  .order-history .single .footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .order-history .single .footer .right button {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    width: 100%;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .order-history .single.download .footer .right button.dnld {
+    width: 100%;
+  }
+  .order-history .single .footer .right {
+    width: 100%;
+  }
+  .order-history .single .header .left .id {
+    margin-bottom: 0;
+  }
+  .order-history .single .header {
+    margin-bottom: 3px;
+  }
+
+  .order-place-details {
+    padding-top: 45px;
+    padding-bottom: 80px;
+  }
+  .order-place-details .left h5.main-heading {
+    margin-bottom: 10px;
+  }
+  .order-place-details .left p.id {
+    margin-bottom: 15px;
+  }
+  .order-place-details .left p.date {
+    margin-bottom: 10px;
+  }
+  .order-place-details .left .location {
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+  .order-place-details .left p.mobile {
+    margin-bottom: 10px;
+  }
+  .order-place-details .left p.email {
+    margin-bottom: 18px;
+  }
+  .order-place-details .left .location .right p.bottom {
+    width: 100%;
+    margin-top: 0;
+  }
+  .order-place-details .left .bottom {
+    padding: 20px;
+    flex-direction: column;
+    margin-top: 35px;
+  }
+  .order-place-details .left .bottom h5 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .order-place-details .left .bottom button {
+    width: 100%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+  .order-place-details .right .card {
+    padding: 25px;
+    margin-top: 25px;
+  }
 }
