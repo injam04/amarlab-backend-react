@@ -15,7 +15,7 @@ class Login extends Component {
     axios
       .post(`${process.env.REACT_APP_BASE_URL}/auth/login/`, data)
       .then((resp) => {
-        // console.log(resp.data);
+        console.log(resp.data);
         localStorage.setItem('token', JSON.stringify(resp.data.key));
         this.props.history.push('/orders');
         handleIsLoggedIn(true, resp.data.key);
@@ -24,7 +24,7 @@ class Login extends Component {
         axios
           .get(`${process.env.REACT_APP_BASE_URL}/auth/user/`)
           .then((resp) => {
-            // console.log(resp.data);
+            console.log(resp.data);
             setUserDetails(resp.data);
             localStorage.setItem('user_details', JSON.stringify(resp.data));
           });

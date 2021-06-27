@@ -31,7 +31,7 @@ const Aside = ({ asideOpen, setAsideClose }) => {
                         <span className='svg-icon menu-icon'>
                           <i className='fas fa-home' />
                         </span>
-                        <span className='menu-text'>Home</span>
+                        <span className='menu-text'>Overview</span>
                       </Link>
                     </li>
                     <li className='menu-item'>

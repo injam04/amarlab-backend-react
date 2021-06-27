@@ -115,7 +115,7 @@ class MainApp extends Component {
                 style={{ minHeight: '93vh' }}
               >
                 <div className='d-flex flex-column-fluid'>
-                  <div className='container' style={{ margin: '40px 0' }}>
+                  <div className='container' style={{ margin: '25px 0' }}>
                     <Route exact path='/' component={Homepage} />
                     <PrivateRoute path='/orders' component={Orders} />
                     <PrivateRoute path='/users' component={Users} />
