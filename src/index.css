@@ -116,6 +116,40 @@ body {
   background: #f7f7f7;
 }
 
+.order-history table tbody select {
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  padding: 2px 4px;
+  border: 1px solid #a1a1a1;
+  background-color: transparent;
+}
+.order-history table tbody textarea {
+  outline: none;
+  border: 1px solid #a1a1a1;
+  border-radius: 5px;
+  padding: 2px 4px;
+  width: 185px;
+  margin-right: 8px;
+  min-height: 65px;
+}
+
+.order-history table tbody input {
+  outline: none;
+  border: 1px solid #a1a1a1;
+  border-radius: 5px;
+  padding: 2px 4px;
+  width: 185px;
+  margin-right: 8px;
+  height: 30px;
+}
+
+.order-history table tbody .last {
+  margin-top: 8px;
+}
+
+/* ============================================================ */
+
 .order-history h5.main-heading {
   margin-bottom: 40px;
 }
@@ -454,6 +488,13 @@ body {
 
 .order-place-details.details .right .card .bottom p {
   color: #6e63e7;
+}
+
+.react-datepicker__day-name,
+.react-datepicker__day,
+.react-datepicker__time-name {
+  margin: 6px;
+  font-size: 13px;
 }
 
 /* Aside */

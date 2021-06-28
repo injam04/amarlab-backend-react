@@ -1,3 +1,6 @@
+import DateSelect from './DateSelect';
+import TimeSelect from './TimeSelect';
+
 const OrderTable = () => {
   return (
     <tr>
@@ -11,36 +14,63 @@ const OrderTable = () => {
         </p>
       </td>
       <td className='pl-3'>
-        <p className='mb-0 font-weight-bold'>Processing</p>
+        <select className=''>
+          <option value=''>Order Confirmed</option>
+        </select>
+        {/* <p className='mb-0 font-weight-bold'>Processing</p> */}
       </td>
       <td className='pl-3'>
-        <p className='mb-0 font-weight-bold'>Himika</p>
+        <select className=''>
+          <option value=''>Himika</option>
+        </select>
+        {/* <p className='mb-0 font-weight-bold'>Himika</p> */}
       </td>
       <td className='pl-3'>
-        <p className='mb-0 font-weight-bold'>Nirob</p>
+        <select className=''>
+          <option value=''>Nirob</option>
+        </select>
+        {/* <p className='mb-0 font-weight-bold'>Nirob</p> */}
       </td>
       <td className='pl-3'>
-        <p className='mb-0 font-weight-bold'>COVID</p>
+        <select className=''>
+          <option value=''>COVID</option>
+        </select>
+        {/* <p className='mb-0 font-weight-bold'>COVID</p> */}
       </td>
       <td className='pl-3'>
-        <p className='mb-0 font-weight-bold'>BASIS</p>
+        <textarea value='Basis'></textarea>
+        {/* <p className='mb-0 font-weight-bold'>BASIS</p> */}
       </td>
       <td className='pl-3'>
         <p className='mb-0 font-weight-bold pr-3'>
-          Injamamul Haque <br /> Age: 26 <br /> Sex: Male <br /> Address: 72,
-          Janata Housing, Ring road, Shyamoli
+          <input type='text' value='Injamamul Haque' />
+          <input type='number' value='26' className='last' />
+          <select className='last' style={{ width: '185px' }}>
+            <option value=''>Male</option>
+            <option value=''>Female</option>
+          </select>
+          <textarea
+            value='72, Janata Housing, Ring road, Shyamoli'
+            className='last'
+          ></textarea>
         </p>
       </td>
       <td className='pl-3'>
-        <p className='mb-0 font-weight-bold'>Cronic</p>
+        <select className=''>
+          <option value=''>Cronic</option>
+        </select>
+        {/* <p className='mb-0 font-weight-bold'>Cronic</p> */}
       </td>
       <td className='pl-3'>
-        <p className='mb-0 font-weight-bold pr-2'>
+        <input type='number' value='01714505084' />
+        <input type='email' value='injam.cse@gmail.com' className='last' />
+        {/* <p className='mb-0 font-weight-bold pr-2'>
           01714505084 <br /> injam.cse@gmail.com
-        </p>
+        </p> */}
       </td>
       <td className='pl-3'>
-        <p className='mb-0 font-weight-bold'>Mohammadpur</p>
+        <textarea value='Mohammadpur'></textarea>
+        {/* <p className='mb-0 font-weight-bold'>Mohammadpur</p> */}
       </td>
       <td className='pl-3'>
         <div className='mb-0 font-weight-bold'>
@@ -77,17 +107,23 @@ const OrderTable = () => {
       </td>
       <td className='pl-3'>
         <p className='mb-0 font-weight-bold'>
-          10 June 2021, <br /> 10:20 Am
+          <DateSelect />
+          <TimeSelect />
+          {/* <input type='text' value='10:20 Am' className='last' /> */}
         </p>
       </td>
       <td className='pl-3'>
         <p className='mb-0 font-weight-bold'>BDT 16700</p>
       </td>
       <td className='pl-3'>
+        <input type='text' value='- BDT 700' />
         <p className='mb-0 font-weight-bold'>
-          - BDT 700
-          <br /> Reasons: Lorem ipsum dolor sit amet, consectetur adipisicing
-          elit. Animi, fuga.
+          <br /> Reasons:{' '}
+          <textarea
+            value='Lorem ipsum dolor sit amet, consectetur adipisicing
+          elit. Animi, fuga.'
+            rows='5'
+          ></textarea>
           <br /> - Himika
         </p>
       </td>
@@ -99,12 +135,18 @@ const OrderTable = () => {
       </td>
       <td className='pl-3'>
         <p className='mb-0 font-weight-bold pr-2'>
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veniam,
-          assumenda labore dolorem et consequuntur consectetur?
+          <textarea
+            value='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veniam,
+          assumenda labore dolorem et consequuntur consectetur?'
+            rows='6'
+          ></textarea>
         </p>
       </td>
       <td className='pl-3'>
-        <p className='mb-0 font-weight-bold'>Delivered (Hard Copy)</p>
+        <select>
+          <option>Delivered (Hard Copy)</option>
+        </select>
+        {/* <p className='mb-0 font-weight-bold'>Delivered (Hard Copy)</p> */}
       </td>
     </tr>
   );
