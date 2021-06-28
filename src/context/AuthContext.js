@@ -8,6 +8,7 @@ class AuthContextProvider extends Component {
     isLoggedIn: false,
     apiKey: null,
     user_details: null,
+    is_superuser: false,
   };
 
   handleIsLoggedIn = (value, key) => {
@@ -27,6 +28,10 @@ class AuthContextProvider extends Component {
     this.setState({ user_details: data });
   };
 
+  setIsSuperuser = (value) => {
+    this.setState({ is_superuser: value });
+  };
+
   componentDidMount() {
     const token = localStorage.getItem('token');
 
@@ -40,6 +45,11 @@ class AuthContextProvider extends Component {
     if (user_details) {
       this.setState({ user_details: JSON.parse(user_details) });
     }
+
+    const is_superuser = localStorage.getItem('is_superuser');
+    if (is_superuser) {
+      this.setIsSuperuser(JSON.parse(is_superuser));
+    }
   }
 
   render() {
@@ -50,6 +60,7 @@ class AuthContextProvider extends Component {
           handleIsLoggedIn: this.handleIsLoggedIn,
           interceptor: this.interceptor,
           setUserDetails: this.setUserDetails,
+          setIsSuperuser: this.setIsSuperuser,
         }}
       >
         {this.props.children}

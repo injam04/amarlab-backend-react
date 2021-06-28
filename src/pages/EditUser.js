@@ -27,6 +27,7 @@ class EditUser extends Component {
 
   componentDidMount() {
     const token = localStorage.getItem('token');
+    const is_superuser = localStorage.getItem('is_superuser');
     if (!token) {
       this.props.history.push('/login');
     } else {
@@ -36,28 +37,38 @@ class EditUser extends Component {
         return config;
       });
 
-      this.fetchGroup();
-      const params = this.props.match.params.id;
+      if (JSON.parse(is_superuser) === false) {
+        this.props.history.push('/');
+      } else {
+        this.fetchGroup();
+        const params = this.props.match.params.id;
 
-      if (params) {
-        axios
-          .get(
-            `${process.env.REACT_APP_BASE_URL}/user_management/user/${params}`
-          )
-          .then((resp) => {
-            // console.log(resp.data);
-            this.setState({ first_name: resp.data.first_name });
-            this.setState({ last_name: resp.data.last_name });
-            this.setState({ email: resp.data.email });
-            this.setState({
-              user_group:
-                resp.data.groups.length !== 0 ? resp.data.groups[0] : '',
+        if (params) {
+          axios
+            .get(
+              `${process.env.REACT_APP_BASE_URL}/user_management/user/${params}`
+            )
+            .then((resp) => {
+              // console.log(resp.data);
+              this.setState({ first_name: resp.data.first_name });
+              this.setState({ last_name: resp.data.last_name });
+              this.setState({ email: resp.data.email });
+              this.setState({
+                user_group:
+                  resp.data.groups.length !== 0 ? resp.data.groups[0] : '',
+              });
+              this.setState({ is_active: resp.data.is_active });
+              this.setState({ userId: resp.data.id });
+              this.setState({ username: resp.data.username });
+              this.setState({ password: resp.data.password });
+            })
+            .catch((error) => {
+              // console.log(error.response);
+              if (error.response.status === 404) {
+                this.props.history.push('/users');
+              }
             });
-            this.setState({ is_active: resp.data.is_active });
-            this.setState({ userId: resp.data.id });
-            this.setState({ username: resp.data.username });
-            this.setState({ password: resp.data.password });
-          });
+        }
       }
     }
   }

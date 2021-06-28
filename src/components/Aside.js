@@ -1,6 +1,10 @@
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const Aside = ({ asideOpen, setAsideClose }) => {
+  const { is_superuser } = useContext(AuthContext);
+
   return (
     <div
       className={`aside aside-left d-flex aside-fixed ${
@@ -46,18 +50,20 @@ const Aside = ({ asideOpen, setAsideClose }) => {
                         <span className='menu-text'>Orders</span>
                       </Link>
                     </li>
-                    <li className='menu-item'>
-                      <Link
-                        to='/users'
-                        className='menu-link'
-                        onClick={() => setAsideClose()}
-                      >
-                        <span className='svg-icon menu-icon'>
-                          <i className='fas fa-users' />
-                        </span>
-                        <span className='menu-text'>Users</span>
-                      </Link>
-                    </li>
+                    {is_superuser && (
+                      <li className='menu-item'>
+                        <Link
+                          to='/users'
+                          className='menu-link'
+                          onClick={() => setAsideClose()}
+                        >
+                          <span className='svg-icon menu-icon'>
+                            <i className='fas fa-users' />
+                          </span>
+                          <span className='menu-text'>Users</span>
+                        </Link>
+                      </li>
+                    )}
 
                     {/* <li className='menu-item'>
                       <Link

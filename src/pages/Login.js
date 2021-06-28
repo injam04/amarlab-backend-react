@@ -11,11 +11,17 @@ class Login extends Component {
     password: '',
   };
 
-  loginAjax = (data, handleIsLoggedIn, interceptor, setUserDetails) => {
+  loginAjax = (
+    data,
+    handleIsLoggedIn,
+    interceptor,
+    setUserDetails,
+    setIsSuperuser
+  ) => {
     axios
       .post(`${process.env.REACT_APP_BASE_URL}/auth/login/`, data)
       .then((resp) => {
-        console.log(resp.data);
+        // console.log(resp.data);
         localStorage.setItem('token', JSON.stringify(resp.data.key));
         this.props.history.push('/orders');
         handleIsLoggedIn(true, resp.data.key);
@@ -24,9 +30,22 @@ class Login extends Component {
         axios
           .get(`${process.env.REACT_APP_BASE_URL}/auth/user/`)
           .then((resp) => {
-            console.log(resp.data);
+            // console.log(resp.data);
             setUserDetails(resp.data);
             localStorage.setItem('user_details', JSON.stringify(resp.data));
+
+            axios
+              .get(
+                `${process.env.REACT_APP_BASE_URL}/user_management/user/${resp.data.pk}`
+              )
+              .then((resp) => {
+                // console.log(resp.data.is_superuser);
+                localStorage.setItem(
+                  'is_superuser',
+                  JSON.stringify(resp.data.is_superuser)
+                );
+                setIsSuperuser(resp.data.is_superuser);
+              });
           });
       })
       .catch((error) => {
@@ -42,7 +61,13 @@ class Login extends Component {
       });
   };
 
-  handleLogin = (e, handleIsLoggedIn, interceptor, setUserDetails) => {
+  handleLogin = (
+    e,
+    handleIsLoggedIn,
+    interceptor,
+    setUserDetails,
+    setIsSuperuser
+  ) => {
     e.preventDefault();
 
     if (this.state.email.trim() === '') {
@@ -59,7 +84,13 @@ class Login extends Component {
         password: this.state.password,
       };
 
-      this.loginAjax(postLogin, handleIsLoggedIn, interceptor, setUserDetails);
+      this.loginAjax(
+        postLogin,
+        handleIsLoggedIn,
+        interceptor,
+        setUserDetails,
+        setIsSuperuser
+      );
       // console.log(postLogin);
     }
   };
@@ -73,7 +104,8 @@ class Login extends Component {
 
   render() {
     const { email, password } = this.state;
-    const { handleIsLoggedIn, interceptor, setUserDetails } = this.context;
+    const { handleIsLoggedIn, interceptor, setUserDetails, setIsSuperuser } =
+      this.context;
 
     return (
       <section className='login_page'>
@@ -113,7 +145,8 @@ class Login extends Component {
                         e,
                         handleIsLoggedIn,
                         interceptor,
-                        setUserDetails
+                        setUserDetails,
+                        setIsSuperuser
                       )
                     }
                   >
