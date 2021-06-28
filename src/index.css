@@ -66,7 +66,7 @@ body {
 
 /*======================== Homepage ===========================*/
 .homepage .single {
-  border: 1px solid #3f4254;
+  /* border: 1px solid #3f4254; */
   border-radius: 5px;
   padding: 30px 0;
 }
@@ -106,6 +106,14 @@ body {
 .order-history {
   padding-top: 20px;
   padding-bottom: 40px;
+}
+
+.order-history table thead tr th {
+  background: #eee;
+}
+
+.order-history table tbody tr:hover {
+  background: #f7f7f7;
 }
 
 .order-history h5.main-heading {
@@ -511,7 +519,16 @@ body {
   color: #000;
 }
 
+/* ======================================================================== */
 /*=========================== Medai Queries ================================*/
+/* ======================================================================== */
+
+/*=========================== Homepage ===========================*/
+@media only screen and (max-width: 767px) {
+  .homepage .single {
+    margin-bottom: 15px;
+  }
+}
 
 /*=========================== Order ===========================*/
 @media only screen and (max-width: 767px) {

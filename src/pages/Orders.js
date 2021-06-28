@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
+import OrderTable from '../components/OrderTable';
 
 class Orders extends Component {
   state = {
@@ -151,9 +152,14 @@ class Orders extends Component {
                   All Orders
                 </span>
                 <span className='text-muted mt-3 font-weight-bold font-size-sm'>
-                  More than {orderCount || 0}+ orders
+                  Total orders {orderCount || 0}
                 </span>
               </h3>
+              <div className='card-toolbar'>
+                <Link to='/order-add' className='btn btn-primary'>
+                  Add Order
+                </Link>
+              </div>
             </div>
             <div className='card-body pt-2 pb-0 mt-n3'>
               <div className='row pt-4'>
@@ -171,7 +177,7 @@ class Orders extends Component {
                 </div>
                 <div className='col-md-6'>
                   <select className='form-control' onChange={this.handleByUser}>
-                    <option value=''>Filter by User</option>
+                    <option value=''>Filter by Day</option>
                     {users &&
                       users.map((user, i) => (
                         <option value={user.id} key={i}>
@@ -183,61 +189,41 @@ class Orders extends Component {
               </div>
               <div className='row'>
                 <div className='col-md-12 order-history'>
-                  {orders.length !== 0 &&
-                    orders.map((order, i) => (
-                      <div className='single' key={i}>
-                        <div className='header'>
-                          <div className='left'>
-                            <p className='id'># {order.id}</p>
-                            {/* <p className='date'>01 Feb 2021; 2:17 PM</p> */}
-                            <p className='date'>
-                              {/* {order.created_at} */}
-                              {moment(order.created_at).format(
-                                'DD MMM YYYY; hh:mm A'
-                              )}
-                            </p>
-                            <p className='mb-0'>Status: {order.status}</p>
-                          </div>
-                          <div className='right'>
-                            <p>
-                              {/* ৳ 8500 */}
-                              <span className='text-primary'>
-                                ৳ {order.total_price}
-                              </span>
-                            </p>
-                          </div>
-                        </div>
-                        <div className='footer'>
-                          <p className='left'>
-                            <span>Test Collect Date:</span>{' '}
-                            {moment(order.date).format('DD MMM YYYY')}
-                          </p>
-                          <div className='right'>
-                            <Link
-                              to={`/order/${order.id}`}
-                              className='btn btn-primary'
-                            >
-                              View Details
-                            </Link>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  {orders.length === 0 && <h2>Sorry, No orders found.</h2>}
-                </div>
-                {orders.length !== 0 && (
-                  <div className='col-md-12'>
-                    <p className='text-center mb-15'>
-                      <button
-                        className='btn btn-primary btn-lg mb-0'
-                        disabled={next ? '' : 'disabled'}
-                        onClick={this.loadMore}
-                      >
-                        SHow More
-                      </button>
-                    </p>
+                  <div className='table-responsive'>
+                    <table className='table'>
+                      <thead>
+                        <tr>
+                          <th className='pl-5 py-4 min-w-100px'>#ID</th>
+                          <th className='py-4 min-w-130px'>Date & Time</th>
+                          <th className='py-4 min-w-130px'>Order Status</th>
+                          <th className='py-4 min-w-130px'>CS Agent</th>
+                          <th className='py-4 min-w-110px'>MT</th>
+                          <th className='py-4 min-w-110px'>Type</th>
+                          <th className='py-4 min-w-130px'>Reference</th>
+                          <th className='py-4 min-w-180px'>Patient Info</th>
+                          <th className='py-4 min-w-110px'>Persona</th>
+                          <th className='py-4 min-w-170px'>Contact</th>
+                          <th className='py-4 min-w-150px'>Area</th>
+                          <th className='py-4 min-w-150px'>Order Details</th>
+                          <th className='py-4 min-w-130px'>Lab</th>
+                          <th className='py-4 min-w-150px'>
+                            Sample Collection
+                          </th>
+                          <th className='py-4 min-w-130px'>Cart Value</th>
+                          <th className='py-4 min-w-150px'>Discount</th>
+                          <th className='py-4 min-w-150px'>Total Payment</th>
+                          <th className='py-4 min-w-150px'>Payment Status</th>
+                          <th className='py-4 min-w-180px'>Order Note</th>
+                          <th className='py-4 min-w-180px'>Report Delivery</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <OrderTable />
+                        <OrderTable />
+                      </tbody>
+                    </table>
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment';
 import React, { Component } from 'react';
 
 class Homepage extends Component {
@@ -68,25 +69,26 @@ class Homepage extends Component {
             <div className='card-body'>
               <div className='row all'>
                 <div className='col-md-4'>
-                  <div className='single'>
-                    <h1 className=''>Total Orders</h1>
-                    <p className=''>
+                  <div className='single bg-light-danger'>
+                    <span className='svg-icon svg-icon-3x svg-icon-danger d-block my-2'></span>
+                    <h1 className='text-danger'>Total Orders</h1>
+                    <p className='text-danger'>
                       {totalOrder ? `${this.addZero(totalOrder)}` : '00'}
                     </p>
                   </div>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single'>
-                    <h1 className=''>Total Patients</h1>
-                    <p className=''>
+                  <div className='single bg-light-success'>
+                    <h1 className='text-success'>Total Patients</h1>
+                    <p className='text-success'>
                       {totalPatient ? `${this.addZero(totalPatient)}` : '00'}
                     </p>
                   </div>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single '>
-                    <h1 className=''>Total Revenue (GMV)</h1>
-                    <p className=''>
+                  <div className='single bg-light-warning'>
+                    <h1 className='text-warning'>Total Revenue (GMV)</h1>
+                    <p className='text-warning'>
                       {totalRevenue ? `${totalRevenue}.00` : '00.00'}
                     </p>
                   </div>
@@ -95,27 +97,33 @@ class Homepage extends Component {
               <div className='row today mt-13'>
                 <div className='col-md-12 mb-3'>
                   <p className='text-center button'>
-                    <button className='btn btn-light'>Todays</button>
+                    <button className='btn btn-light'>
+                      Todays {`(${moment(new Date()).format('DD MMM YYYY')})`}
+                    </button>
                   </p>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single'>
-                    <h1>Orders</h1>
-                    <p>{totalOrder ? `${this.addZero(totalOrder)}` : '00'}</p>
+                  <div className='single bg-light-danger'>
+                    <h1 className='text-danger'>Orders</h1>
+                    <p className='text-danger'>
+                      {totalOrder ? `${this.addZero(totalOrder)}` : '00'}
+                    </p>
                   </div>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single'>
-                    <h1>Patients</h1>
-                    <p>
+                  <div className='single bg-light-success'>
+                    <h1 className='text-success'>Patients</h1>
+                    <p className='text-success'>
                       {totalPatient ? `${this.addZero(totalPatient)}` : '00'}
                     </p>
                   </div>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single'>
-                    <h1>Revenue (GMV)</h1>
-                    <p>{totalRevenue ? `${totalRevenue}.00` : '00.00'}</p>
+                  <div className='single bg-light-warning'>
+                    <h1 className='text-warning'>Revenue (GMV)</h1>
+                    <p className='text-warning'>
+                      {totalRevenue ? `${totalRevenue}.00` : '00.00'}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -126,23 +134,27 @@ class Homepage extends Component {
                   </p>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single'>
-                    <h1>Orders</h1>
-                    <p>{totalOrder ? `${this.addZero(totalOrder)}` : '00'}</p>
+                  <div className='single bg-light-danger'>
+                    <h1 className='text-danger'>Orders</h1>
+                    <p className='text-danger'>
+                      {totalOrder ? `${this.addZero(totalOrder)}` : '00'}
+                    </p>
                   </div>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single'>
-                    <h1>Patients</h1>
-                    <p>
+                  <div className='single bg-light-success'>
+                    <h1 className='text-success'>Patients</h1>
+                    <p className='text-success'>
                       {totalPatient ? `${this.addZero(totalPatient)}` : '00'}
                     </p>
                   </div>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single'>
-                    <h1>Revenue (GMV)</h1>
-                    <p>{totalRevenue ? `${totalRevenue}.00` : '00.00'}</p>
+                  <div className='single bg-light-warning'>
+                    <h1 className='text-warning'>Revenue (GMV)</h1>
+                    <p className='text-warning'>
+                      {totalRevenue ? `${totalRevenue}.00` : '00.00'}
+                    </p>
                   </div>
                 </div>
               </div>
