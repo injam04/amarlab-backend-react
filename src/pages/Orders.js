@@ -1,7 +1,5 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import moment from 'moment';
 import OrderTable from '../components/OrderTable';
 import OrderAddModal from '../components/OrderAddModal';
 
@@ -10,8 +8,8 @@ class Orders extends Component {
     orders: [],
     orderCount: null,
     next: null,
-    offset: 8,
-    limit: 8,
+    offset: 2,
+    limit: 2,
     users: null,
     showAddModal: false,
   };
@@ -28,7 +26,7 @@ class Orders extends Component {
   fetchOrders = () => {
     axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/order/order-tree/?page=1&limit=8&ofset=0`
+        `${process.env.REACT_APP_BASE_URL}/order/order-tree/?page=1&limit=2&ofset=0`
       )
       .then((resp) => {
         // console.log(resp.data.results);
@@ -44,7 +42,7 @@ class Orders extends Component {
   }
 
   loadMore = () => {
-    this.setState({ offset: this.state.offset + 8 });
+    this.setState({ offset: this.state.offset + 2 });
 
     let params = new URLSearchParams(this.props.location.search);
     let status = params.get('status');
@@ -82,7 +80,7 @@ class Orders extends Component {
         .then((resp) => {
           // console.log(resp.data);
           this.setState({
-            users: [...this.state.orders, ...resp.data.results],
+            orders: [...this.state.orders, ...resp.data.results],
           });
           this.setState({ next: resp.data.next });
         });
@@ -207,18 +205,18 @@ class Orders extends Component {
                         <thead>
                           <tr>
                             <th className='pl-5 py-4 min-w-100px'>#ID</th>
+                            <th className='pl-5 py-4 min-w-150px'>User</th>
                             <th className='py-4 min-w-130px'>Date & Time</th>
                             <th className='py-4 min-w-130px'>Order Status</th>
                             <th className='py-4 min-w-130px'>CS Agent</th>
                             <th className='py-4 min-w-110px'>MT</th>
                             <th className='py-4 min-w-110px'>Type</th>
                             <th className='py-4 min-w-130px'>Reference</th>
-                            <th className='py-4 min-w-180px'>Patient Info</th>
+                            {/* <th className='py-4 min-w-180px'>Patient Info</th> */}
                             <th className='py-4 min-w-110px'>Persona</th>
                             <th className='py-4 min-w-170px'>Contact</th>
                             <th className='py-4 min-w-150px'>Area</th>
-                            <th className='py-4 min-w-150px'>Order Details</th>
-                            <th className='py-4 min-w-130px'>Lab</th>
+                            <th className='py-4 min-w-250px'>Order Details</th>
                             <th className='py-4 min-w-150px'>
                               Sample Collection
                             </th>
@@ -233,11 +231,25 @@ class Orders extends Component {
                           </tr>
                         </thead>
                         <tbody>
-                          <OrderTable />
-                          <OrderTable />
+                          {orders &&
+                            orders.map((order, i) => (
+                              <OrderTable key={i} order={order} />
+                            ))}
+                          {/* <OrderTable /> */}
                         </tbody>
                       </table>
                     </div>
+                  </div>
+                  <div className='col-12 mb-10'>
+                    <p className='m-0 text-center'>
+                      <button
+                        className='btn btn-primary btn-lg'
+                        onClick={this.loadMore}
+                        disabled={next ? '' : 'disabled'}
+                      >
+                        See More
+                      </button>
+                    </p>
                   </div>
                 </div>
               </div>

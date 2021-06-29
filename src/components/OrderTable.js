@@ -1,87 +1,121 @@
-import DateSelect from './DateSelect';
-import TimeSelect from './TimeSelect';
+import moment from 'moment';
 
-const OrderTable = () => {
+const OrderTable = ({ order }) => {
   return (
     <tr>
-      <td className='py-5 pl-5'>
-        <p className='mb-0 font-weight-bold'>#0065</p>
+      <td className='py-3 pl-5'>
+        <p className='mb-0 font-weight-bold'>#{order.order_id}</p>
+      </td>
+      <td className='pl-3'>
+        <p className='mb-0 font-weight-bold'>{order.user.username}</p>
       </td>
       <td className='pl-3'>
         <p className='mb-0 font-weight-bold'>
-          21 June 2021, <br />
-          12:15 PM
+          {moment(order.created_at).format('DD MMM YYYY,')}
+          <br />
+          {moment(order.created_at).format('hh:mm A')}
         </p>
       </td>
       <td className='pl-3'>
-        <select className=''>
-          <option value=''>Order Confirmed</option>
-        </select>
-        {/* <p className='mb-0 font-weight-bold'>Processing</p> */}
+        <p className='mb-0 font-weight-bold text-capitalize'>
+          {order.orderdetail ? (
+            order.orderdetail.order_status
+          ) : (
+            <span>&mdash;</span>
+          )}
+        </p>
       </td>
       <td className='pl-3'>
-        <select className=''>
-          <option value=''>Himika</option>
-        </select>
-        {/* <p className='mb-0 font-weight-bold'>Himika</p> */}
+        <p className='mb-0 font-weight-bold'>
+          {order.orderdetail && order.orderdetail.cs_agent ? (
+            order.orderdetail.cs_agent.first_name
+          ) : (
+            <span>&mdash;</span>
+          )}
+        </p>
       </td>
       <td className='pl-3'>
-        <select className=''>
-          <option value=''>Nirob</option>
-        </select>
-        {/* <p className='mb-0 font-weight-bold'>Nirob</p> */}
+        <p className='mb-0 font-weight-bold'>
+          {order.orderdetail && order.orderdetail.mt ? (
+            order.orderdetail.mt.first_name
+          ) : (
+            <span>&mdash;</span>
+          )}
+        </p>
       </td>
       <td className='pl-3'>
-        <select className=''>
-          <option value=''>COVID</option>
-        </select>
-        {/* <p className='mb-0 font-weight-bold'>COVID</p> */}
+        <p className='mb-0 font-weight-bold text-capitalize'>
+          {/* {order.orderdetail && order.orderdetail.order_type === 'non_covid'
+            ? 'NON COVID'
+            : 'COVID'} */}
+          {order.orderdetail && order.orderdetail.order_type ? (
+            order.orderdetail.order_type
+          ) : (
+            <span>&mdash;</span>
+          )}
+        </p>
       </td>
       <td className='pl-3'>
-        <textarea value='Basis'></textarea>
-        {/* <p className='mb-0 font-weight-bold'>BASIS</p> */}
+        <p className='mb-0 font-weight-bold text-capitalize'>
+          {order.orderdetail ? (
+            order.orderdetail.references
+          ) : (
+            <span>&mdash;</span>
+          )}
+        </p>
       </td>
-      <td className='pl-3'>
+      {/* <td className='pl-3'>
         <p className='mb-0 font-weight-bold pr-3'>
-          <input type='text' value='Injamamul Haque' />
-          <input type='number' value='26' className='last' />
-          <select className='last' style={{ width: '185px' }}>
-            <option value=''>Male</option>
-            <option value=''>Female</option>
-          </select>
-          <textarea
-            value='72, Janata Housing, Ring road, Shyamoli'
-            className='last'
-          ></textarea>
+          Injamamul Haque <br />
+          Age: 26 <br />
+          Sex: Male <br />
+          Address: 72, Janata Housing, Ring road, Shyamoli
+        </p>
+      </td> */}
+      <td className='pl-3'>
+        <p className='mb-0 font-weight-bold text-capitalize'>
+          {order.orderdetail ? order.orderdetail.persona : <span>&mdash;</span>}
         </p>
       </td>
       <td className='pl-3'>
-        <select className=''>
-          <option value=''>Cronic</option>
-        </select>
-        {/* <p className='mb-0 font-weight-bold'>Cronic</p> */}
+        <p className='mb-0 font-weight-bold pr-2'>
+          {order.orderitem[0].address.mobile || ''}
+          <br /> {order.orderitem[0].address.email || ''}
+        </p>
       </td>
       <td className='pl-3'>
-        <input type='number' value='01714505084' />
-        <input type='email' value='injam.cse@gmail.com' className='last' />
-        {/* <p className='mb-0 font-weight-bold pr-2'>
-          01714505084 <br /> injam.cse@gmail.com
-        </p> */}
-      </td>
-      <td className='pl-3'>
-        <textarea value='Mohammadpur'></textarea>
-        {/* <p className='mb-0 font-weight-bold'>Mohammadpur</p> */}
+        <p className='mb-0 font-weight-bold'>
+          {order.orderitem[0].address.address
+            ? `${order.orderitem[0].address.address}, `
+            : ''}
+          {`${order.orderitem[0].address.thana}, `}
+          {order.orderitem[0].address.district}
+        </p>
       </td>
       <td className='pl-3'>
         <div className='mb-0 font-weight-bold'>
-          <div className='items'>
-            &mdash; CBC <br /> <span className='text-dark-50'>৳ BDT 300</span>{' '}
-            <br /> Popular
-          </div>
-          <div className='items mt-3'>
-            &mdash; HbA1c <br /> <span className='text-dark-50'>৳ BDT 960</span>{' '}
-            <br /> Dr. Lalpaths
-          </div>
+          {order.orderitem.map((item, i) => (
+            <div key={i} className='mb-2'>
+              <div className='items'>
+                &mdash;{' '}
+                {
+                  item.purchasable_order_item.testitem_purchasable_oi
+                    .diagnostic_test.name
+                }{' '}
+                <br />{' '}
+                <span className='text-dark-50'>
+                  Price: ৳ BDT {item.purchasable_order_item.sell_price}
+                </span>{' '}
+                <br />
+                Lab:{' '}
+                {
+                  item.purchasable_order_item.testitem_purchasable_oi.branch.lab
+                    .name
+                }{' '}
+                <br /> Patient: {item.patient.full_name}
+              </div>
+            </div>
+          ))}
           <div className='items mt-3'>
             &mdash; Service Fee: <br />{' '}
             <span className='text-dark-50'>৳ BDT 960</span> <br />
@@ -93,60 +127,70 @@ const OrderTable = () => {
             </a>
             <br />*{' '}
             <a href='?#' className='text-dark'>
-              Test Edit
-            </a>{' '}
-            <br />*{' '}
-            <a href='?#' className='text-dark'>
               Test Remove
             </a>
           </div>
         </div>
       </td>
       <td className='pl-3'>
-        <p className='mb-0 font-weight-bold'>Popular</p>
-      </td>
-      <td className='pl-3'>
         <p className='mb-0 font-weight-bold'>
-          <DateSelect />
-          <TimeSelect />
-          {/* <input type='text' value='10:20 Am' className='last' /> */}
+          {moment(order.date).format('DD MMM YYYY')}, <br />
+          {/* 05:15 PM */}
         </p>
       </td>
       <td className='pl-3'>
-        <p className='mb-0 font-weight-bold'>BDT 16700</p>
+        <p className='mb-0 font-weight-bold'>BDT {order.total_price}</p>
       </td>
       <td className='pl-3'>
-        <input type='text' value='- BDT 700' />
-        <p className='mb-0 font-weight-bold'>
-          <br /> Reasons:{' '}
-          <textarea
-            value='Lorem ipsum dolor sit amet, consectetur adipisicing
-          elit. Animi, fuga.'
-            rows='5'
-          ></textarea>
-          <br /> - Himika
+        <div className='mb-0 font-weight-bold'>
+          {order.orderdiscount ? (
+            <>
+              <p className='m-0'>
+                &mdash; BDT {order.orderdiscount.discount_price} <br />
+              </p>
+              <p className='my-2'>
+                Reasons: <br /> {order.orderdiscount.discount_note}
+              </p>
+              &mdash; Himika
+            </>
+          ) : (
+            <p>&mdash;</p>
+          )}
+        </div>
+      </td>
+      <td className='pl-3'>
+        <p className='mb-0 font-weight-bold'>BDT {order.total_price}</p>
+      </td>
+      <td className='pl-3'>
+        <p className='mb-0 font-weight-bold text-capitalize'>
+          {order.orderdetail ? (
+            order.orderdetail.payment_status
+          ) : (
+            <span>&mdash;</span>
+          )}
         </p>
-      </td>
-      <td className='pl-3'>
-        <p className='mb-0 font-weight-bold'>BDT 16000</p>
-      </td>
-      <td className='pl-3'>
-        <p className='mb-0 font-weight-bold'>Unpaid</p>
       </td>
       <td className='pl-3'>
         <p className='mb-0 font-weight-bold pr-2'>
-          <textarea
-            value='Lorem ipsum, dolor sit amet consectetur adipisicing elit. Veniam,
-          assumenda labore dolorem et consequuntur consectetur?'
-            rows='6'
-          ></textarea>
+          {order.orderdetail ? (
+            order.orderdetail.order_note
+          ) : (
+            <span>&mdash;</span>
+          )}
         </p>
       </td>
       <td className='pl-3'>
-        <select>
-          <option>Delivered (Hard Copy)</option>
-        </select>
-        {/* <p className='mb-0 font-weight-bold'>Delivered (Hard Copy)</p> */}
+        {order.orderdelivery.length !== 0 ? (
+          <>
+            {order.orderdelivery.map((orderdelivery, i) => (
+              <p className='mb-0 font-weight-bold' key={i}>
+                {orderdelivery.name}
+              </p>
+            ))}
+          </>
+        ) : (
+          <p className='mb-0 font-weight-bold'>No report</p>
+        )}
       </td>
     </tr>
   );
