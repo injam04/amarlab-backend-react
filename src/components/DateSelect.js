@@ -1,10 +1,8 @@
 import DatePicker from 'react-datepicker';
 import range from 'lodash/range';
 import { getMonth, getYear } from 'date-fns';
-import { useState } from 'react';
 
-const DateSelect = () => {
-  const [defaultDate, setDefaultDate] = useState(null);
+const DateSelect = ({ sampleDate, setSampleDate }) => {
   const years = range(getYear(new Date()), 2025, 1);
   const months = [
     'January',
@@ -62,6 +60,7 @@ const DateSelect = () => {
               background: '#fff',
               padding: '2px 8px',
               fontSize: '13px',
+              width: 'auto',
             }}
           >
             {years.map((option) => (
@@ -88,6 +87,7 @@ const DateSelect = () => {
               background: '#fff',
               padding: '2px 5px',
               fontSize: '13px',
+              width: 'auto',
             }}
           >
             {months.map((option) => (
@@ -117,13 +117,13 @@ const DateSelect = () => {
           </button>
         </div>
       )}
-      selected={defaultDate}
+      selected={sampleDate}
       onChange={(e) => {
-        setDefaultDate(e);
-        // //console.log(e);
+        setSampleDate(e);
+        // console.log(e);
       }}
-      className='form-control'
-      placeholderText='01 Jan 2000'
+      className='form-controll'
+      placeholderText='select date'
       minDate={new Date()}
       dateFormat='dd MMM yyyy'
     />

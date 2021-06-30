@@ -565,19 +565,51 @@ body {
 }
 
 /*============================ Order Add Modal =============================*/
-.modal .create-order tbody .add-user form input {
+.modal .create-order tbody input,
+.modal .create-order tbody select {
   border: none;
   outline: none;
   border: 1px solid #777;
   border-radius: 5px;
   padding: 5px;
   width: 230px;
+  background-color: transparent;
 }
 
 .css-yk16xz-control {
-  width: 230px;
+  /* width: 230px; */
 }
 
+.create-order-lab-pat .patientsss label.single {
+  display: block;
+  position: relative;
+  padding-left: 30px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.create-order-lab-pat .patientsss label.single input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.create-order-lab-pat .patientsss label.single .checkmark {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  height: 19px;
+  width: 19px;
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+.create-order-lab-pat .patientsss label.single input:checked ~ .checkmark {
+  background-color: #31b5c4;
+}
 /* ======================================================================== */
 /*=========================== Medai Queries ================================*/
 /* ======================================================================== */

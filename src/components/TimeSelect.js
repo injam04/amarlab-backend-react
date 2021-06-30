@@ -1,15 +1,12 @@
 import moment from 'moment';
-import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 
-const TimeSelect = () => {
-  const [startDate, setStartDate] = useState(new Date());
-
+const TimeSelect = ({ sampleTime, setSampleTime }) => {
   return (
     <DatePicker
-      selected={startDate}
+      selected={sampleTime}
       onChange={(date) => {
-        setStartDate(date);
+        setSampleTime(date);
         console.log(moment(date).format('hh:mm A'));
       }}
       showTimeSelect
@@ -17,7 +14,8 @@ const TimeSelect = () => {
       timeIntervals={60}
       timeCaption='Time'
       dateFormat='h:mm aa'
-      className='last'
+      className='last mt-2'
+      placeholderText='select time'
     />
   );
 };
