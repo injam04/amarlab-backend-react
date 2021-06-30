@@ -576,6 +576,10 @@ body {
   background-color: transparent;
 }
 
+.modal .create-order tbody .add-user .css-2b097c-container {
+  width: 230px;
+}
+
 .css-yk16xz-control {
   /* width: 230px; */
 }

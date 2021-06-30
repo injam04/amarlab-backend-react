@@ -29,7 +29,7 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
   const [userPatients, setUserPatients] = useState(null);
 
   // address
-  const [district, setDistrict] = useState('');
+  const [district, setDistrict] = useState('dhaka');
   const [thana, setThana] = useState('');
   const [address, setAddress] = useState('');
   const [mobile, setMobile] = useState('');
@@ -216,6 +216,19 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
           .post(`${process.env.REACT_APP_BASE_URL}/order/order/`, postOrder)
           .then((resp) => {
             console.log(resp.data);
+            setUserDetails(null);
+            setOrders([]);
+            setMobile('');
+            setEmail('');
+            setDistrict('dhaka');
+            setThana('');
+            setAddress('');
+            setSampleDate(null);
+            setSampleTime(null);
+            setShowAddModal(false);
+            toast.success('Order places successfully.', {
+              autoClose: 3000,
+            });
           })
           .catch((error) => {
             console.log(error.response);
@@ -230,6 +243,11 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
           }
         }
       });
+  };
+
+  const handleDeleteOrder = (order) => {
+    // console.log(order);
+    setOrders(orders.filter((o) => o !== order));
   };
 
   return (
@@ -248,12 +266,24 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                 <thead>
                   <tr>
                     <th className='pl-5 py-4 min-w-150px'>User</th>
-                    <th className='py-4 min-w-150px'>Order Details</th>
-                    <th className='py-4 min-w-170px'>Contact</th>
-                    <th className='py-4 min-w-150px'>Area</th>
-                    <th className='py-4 min-w-150px'>Sample Collection</th>
-                    <th className='py-4 min-w-130px'>Cart Value</th>
-                    <th className='py-4 min-w-130px'>Confirm</th>
+                    {userDetails && (
+                      <th className='py-4 min-w-150px'>Order Details</th>
+                    )}
+                    {userDetails && (
+                      <th className='py-4 min-w-130px'>Cart Value</th>
+                    )}
+                    {orders.length !== 0 && (
+                      <th className='py-4 min-w-170px'>Contact</th>
+                    )}
+                    {orders.length !== 0 && (
+                      <th className='py-4 min-w-150px'>Area</th>
+                    )}
+                    {orders.length !== 0 && (
+                      <th className='py-4 min-w-150px'>Sample Collection</th>
+                    )}
+                    {orders.length !== 0 && (
+                      <th className='py-4 min-w-130px'>Confirm</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -300,89 +330,105 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                         )}
                       </div>
                     </td>
-                    <td className='pl-3'>
-                      <div className='items mt-3 font-weight-bold'>
-                        {orders.length !== 0 &&
-                          orders.map((order, i) => (
-                            <div key={i} className='mb-2'>
-                              <div className='items'>
-                                &mdash; {order.test_item.diagnostic_test.name}{' '}
-                                <br />
-                                <span className='text-dark-50'>
-                                  Price: ৳ BDT{' '}
-                                  {
-                                    order.test_item.purchasable_order_item
-                                      .sell_price
-                                  }
-                                </span>{' '}
-                                <br />
-                                Lab: {order.test_item.branch.lab.name} <br />
-                                Patient: {order.patient.full_name}
+                    {userDetails && (
+                      <td className='pl-3'>
+                        <div className='items mt-3 font-weight-bold'>
+                          {orders.length !== 0 &&
+                            orders.map((order, i) => (
+                              <div key={i} className='mb-2'>
+                                <div className='items'>
+                                  &mdash; {order.test_item.diagnostic_test.name}{' '}
+                                  <i
+                                    className='fas fa-times ml-1 text-danger pointer'
+                                    onClick={() => handleDeleteOrder(order)}
+                                  ></i>
+                                  <br />
+                                  <span className='text-dark-50'>
+                                    Price: ৳ BDT{' '}
+                                    {
+                                      order.test_item.purchasable_order_item
+                                        .sell_price
+                                    }
+                                  </span>{' '}
+                                  <br />
+                                  Lab: {order.test_item.branch.lab.name} <br />
+                                  Patient: {order.patient.full_name}
+                                </div>
                               </div>
-                            </div>
-                          ))}
-                        <span
-                          className='pointer bg-primary text-white px-3 py-1 rounded'
-                          onClick={() => setShowTestModal(true)}
+                            ))}
+                          <span
+                            className='pointer bg-primary text-white px-3 py-1 rounded'
+                            onClick={() => setShowTestModal(true)}
+                          >
+                            Test Add
+                          </span>
+                        </div>
+                      </td>
+                    )}
+                    {userDetails && (
+                      <td className='pl-3'>BDT {getTotalPrice(orders)}</td>
+                    )}
+                    {orders.length !== 0 && (
+                      <td className='pl-3'>
+                        <input
+                          type='number'
+                          value={mobile}
+                          onChange={(e) => setMobile(e.target.value)}
+                          placeholder='enter number'
+                        />
+                        <input
+                          className='mt-2'
+                          type='email'
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder='enter email'
+                        />
+                      </td>
+                    )}
+                    {orders.length !== 0 && (
+                      <td className='pl-3'>
+                        <select onChange={(e) => setDistrict(e.target.value)}>
+                          <option value='Dhaka'>Dhaka</option>
+                          <option value='Chattogram'>Chattogram</option>
+                        </select>
+                        <input
+                          className='my-2'
+                          type='text'
+                          placeholder='enter thana'
+                          value={thana}
+                          onChange={(e) => setThana(e.target.value)}
+                        />
+                        <input
+                          value={address}
+                          onChange={(e) => setAddress(e.target.value)}
+                          type='text'
+                          placeholder='location details'
+                        />
+                        {/* <input type='text' placeholder='popular landmark' /> */}
+                      </td>
+                    )}
+                    {orders.length !== 0 && (
+                      <td className='pl-3'>
+                        <DateSelect
+                          sampleDate={sampleDate}
+                          setSampleDate={setSampleDate}
+                        />
+                        <TimeSelect
+                          sampleTime={sampleTime}
+                          setSampleTime={setSampleTime}
+                        />
+                      </td>
+                    )}
+                    {orders.length !== 0 && (
+                      <td className='pl-3'>
+                        <button
+                          className='btn btn-primary btn-sm'
+                          onClick={handleOrderSave}
                         >
-                          Test Add
-                        </span>
-                      </div>
-                    </td>
-                    <td className='pl-3'>
-                      <input
-                        type='number'
-                        value={mobile}
-                        onChange={(e) => setMobile(e.target.value)}
-                        placeholder='enter number'
-                      />
-                      <input
-                        className='mt-2'
-                        type='email'
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder='enter email'
-                      />
-                    </td>
-                    <td className='pl-3'>
-                      <select onChange={(e) => setDistrict(e.target.value)}>
-                        <option value='Dhaka'>Dhaka</option>
-                        <option value='Chattogram'>Chattogram</option>
-                      </select>
-                      <input
-                        className='my-2'
-                        type='text'
-                        placeholder='enter thana'
-                        value={thana}
-                        onChange={(e) => setThana(e.target.value)}
-                      />
-                      <input
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        type='text'
-                        placeholder='location details'
-                      />
-                      {/* <input type='text' placeholder='popular landmark' /> */}
-                    </td>
-                    <td className='pl-3'>
-                      <DateSelect
-                        sampleDate={sampleDate}
-                        setSampleDate={setSampleDate}
-                      />
-                      <TimeSelect
-                        sampleTime={sampleTime}
-                        setSampleTime={setSampleTime}
-                      />
-                    </td>
-                    <td className='pl-3'>BDT {getTotalPrice(orders)}</td>
-                    <td className='pl-3'>
-                      <button
-                        className='btn btn-primary btn-sm'
-                        onClick={handleOrderSave}
-                      >
-                        Save Order
-                      </button>
-                    </td>
+                          Save Order
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 </tbody>
               </table>
@@ -397,7 +443,7 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
         onHide={() => setShowTestModal(false)}
       >
         <ModalBody className='create-order-lab-pat'>
-          <h1>Select Test type</h1>
+          <h5>Select Test type</h5>
           <select
             className='form-control my-3'
             value={testType}
@@ -406,7 +452,7 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
             <option value='diagnostic'>Diagnostic</option>
             <option value='package'>Package</option>
           </select>
-          <h5 className='mt-3'>Search Test</h5>
+          <h5 className='mt-3'>Select Test</h5>
           <SearchTests testType={testType} setAllLabs={setAllLabs} />
           {allLabs && (
             <>

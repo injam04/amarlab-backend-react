@@ -29,7 +29,7 @@ class Orders extends Component {
         `${process.env.REACT_APP_BASE_URL}/order/order-tree/?page=1&limit=2&ofset=0`
       )
       .then((resp) => {
-        // console.log(resp.data.results);
+        console.log(resp.data.results);
         this.setState({ orders: resp.data.results });
         this.setState({ orderCount: resp.data.count });
         this.setState({ next: resp.data.next });
@@ -141,6 +141,7 @@ class Orders extends Component {
 
   setShowAddModal = (value) => {
     this.setState({ showAddModal: value });
+    this.fetchOrders();
   };
 
   render() {
