@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Modal, ModalBody } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import DateSelect from './DateSelect';
+import PatientDob from './PatientDob';
 import SearchTests from './SearchTests';
 import SelectLab from './SelectLab';
 import SelectUser from './SelectUser';
@@ -22,7 +23,7 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
 
   //for orders
   const [userDetails, setUserDetails] = useState(null);
-  const [allLabs, setAllLabs] = useState(null);
+  const [allLabs, setAllLabs] = useState([]);
   const [orderPatients, setOrderPatients] = useState([]);
   const [labDetails, setLabDetails] = useState(null);
 
@@ -36,6 +37,12 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
   const [email, setEmail] = useState('');
   const [sampleDate, setSampleDate] = useState(null);
   const [sampleTime, setSampleTime] = useState(null);
+
+  //patient add
+  const [showPatAddForm, setShowPatAddForm] = useState(false);
+  const [patientName, setPatientName] = useState('');
+  const [patientGender, setPatientGender] = useState('');
+  const [patientDob, setPatientDob] = useState(null);
 
   const getTotalPrice = (array) => {
     const price = array.reduce((total, item) => {
@@ -250,6 +257,50 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
     setOrders(orders.filter((o) => o !== order));
   };
 
+  const handleAddNewPatient = (e) => {
+    e.preventDefault();
+
+    if (patientName.trim() === '') {
+      toast.error(`Please enter patient name.`, {
+        autoClose: 3000,
+      });
+    } else if (patientName.length < 4) {
+      toast.error(`Patient name must be at least three character long.`, {
+        autoClose: 3000,
+      });
+    } else if (patientGender === '') {
+      toast.error(`Please enter patient gender.`, {
+        autoClose: 3000,
+      });
+    } else if (patientDob === '' || patientDob === null) {
+      toast.error(`Please enter patient date of birth.`, {
+        autoClose: 3000,
+      });
+    } else {
+      const postPatient = {
+        full_name: patientName,
+        dob: moment(patientDob).format('YYYY-MM-DD'),
+        sex: patientGender,
+        user: userDetails.id,
+      };
+      // console.log(postPatient);
+
+      axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/user_management/patient/`,
+          postPatient
+        )
+        .then((resp) => {
+          // console.log(resp.data);
+          setUserPatients([...userPatients, resp.data]);
+          setPatientName('');
+          setPatientGender('');
+          setPatientDob(null);
+          setShowPatAddForm(false);
+        });
+    }
+  };
+
   return (
     <>
       <Modal
@@ -454,13 +505,13 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
           </select>
           <h5 className='mt-3'>Select Test</h5>
           <SearchTests testType={testType} setAllLabs={setAllLabs} />
-          {allLabs && (
-            <>
-              <h5 className='mt-3'>Select Lab</h5>
-              <SelectLab allLabs={allLabs} setLabDetails={setLabDetails} />
-            </>
-          )}
-          {userPatients && labDetails && (
+          {/* {allLabs && (
+            <> */}
+          <h5 className='mt-3'>Select Lab</h5>
+          <SelectLab allLabs={allLabs} setLabDetails={setLabDetails} />
+          {/* </>
+          )} */}
+          {userPatients && (
             <div className='patientsss'>
               <h5 className='mt-3'>Select Patient</h5>
               {userPatients.map((patient, i) => (
@@ -477,12 +528,75 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
             </div>
           )}
 
-          <button
-            className='btn btn-primary btn-sm mt-3'
-            onClick={handleSingleTestAdd}
-          >
-            Add Test
-          </button>
+          {!showPatAddForm && (
+            <span
+              onClick={() => setShowPatAddForm(true)}
+              className='bg-success text-white rounded px-2 py-1 pointer'
+            >
+              Add New Patient
+            </span>
+          )}
+
+          {showPatAddForm && (
+            <form className='pat-add' onSubmit={handleAddNewPatient}>
+              <div className='first d-flex'>
+                <div className='left mr-2'>
+                  <input
+                    type='text'
+                    placeholder='Patient name'
+                    value={patientName}
+                    onChange={(e) => setPatientName(e.target.value)}
+                  />
+                </div>
+                <div className='right ml-2'>
+                  <p className='mb-0 font-size-lg font-weight-bold'>Gender</p>
+                  <div className='male-female d-flex'>
+                    <label className='gender'>
+                      Male
+                      <input
+                        type='radio'
+                        name='gender'
+                        value='male'
+                        onChange={(e) => setPatientGender(e.target.value)}
+                      />
+                      <span className='checkmark'></span>
+                    </label>
+                    <label className='gender'>
+                      Female
+                      <input
+                        type='radio'
+                        name='gender'
+                        value='female'
+                        onChange={(e) => setPatientGender(e.target.value)}
+                      />
+                      <span className='checkmark'></span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div className='last'>
+                <PatientDob
+                  patientDob={patientDob}
+                  setPatientDob={setPatientDob}
+                />
+              </div>
+              <button className='btn btn-primary btn-sm mt-2'>
+                Add Patient
+              </button>
+            </form>
+          )}
+
+          {orderPatients.length !== 0 && labDetails && (
+            <>
+              <br />
+              <button
+                className='btn btn-primary btn-sm mt-3'
+                onClick={handleSingleTestAdd}
+              >
+                Add Test
+              </button>
+            </>
+          )}
         </ModalBody>
       </Modal>
     </>

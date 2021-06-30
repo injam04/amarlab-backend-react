@@ -22,7 +22,7 @@ const SelectUser = ({ setUserDetails, setUserPatients }) => {
   // }, []);
 
   const handleChange = (e) => {
-    console.log(e);
+    // console.log(e);
     setUserDetails(e);
 
     axios

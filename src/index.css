@@ -614,6 +614,62 @@ body {
 .create-order-lab-pat .patientsss label.single input:checked ~ .checkmark {
   background-color: #31b5c4;
 }
+
+.create-order-lab-pat form.pat-add .first .left input,
+.create-order-lab-pat form.pat-add .last input {
+  border: none;
+  outline: none;
+  border: 1px solid #777;
+  border-radius: 5px;
+  padding: 5px;
+  width: auto;
+  background-color: transparent;
+}
+
+.create-order-lab-pat form.pat-add .first {
+  align-items: center;
+}
+
+.create-order-lab-pat form.pat-add .first .right .male-female label {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  font-size: 15px;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  margin-bottom: 0;
+  padding: 0 18px 0 28px;
+  color: #7c8399;
+}
+
+.create-order-lab-pat form.pat-add .first .right .male-female label input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.create-order-lab-pat form.pat-add .first .right .male-female label .checkmark {
+  position: absolute;
+  top: 1px;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  border: 3px solid #707070;
+}
+
+.create-order-lab-pat
+  form.pat-add
+  .first
+  .right
+  .male-female
+  label
+  input:checked
+  ~ .checkmark {
+  background-color: #707070;
+}
+
 /* ======================================================================== */
 /*=========================== Medai Queries ================================*/
 /* ======================================================================== */

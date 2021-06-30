@@ -3,9 +3,13 @@ import AsyncSelect from 'react-select/async';
 
 const SearchTests = ({ testType, setAllLabs }) => {
   const handleChange = (e) => {
-    console.log(e);
+    // console.log(e);
+    const labs = e.testitem.filter((item) => {
+      return item.branch !== null;
+    });
+    // console.log(labs);
     // setUserDetails(e);
-    setAllLabs(e.testitem);
+    setAllLabs(labs);
   };
 
   const promiseOptions = (inputValue) =>
