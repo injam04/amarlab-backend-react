@@ -2,6 +2,7 @@ import axios from 'axios';
 import moment from 'moment';
 import { useState, useEffect } from 'react';
 import { Modal, ModalBody } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 
 const OrderTable = ({ order }) => {
   const [showEditModal, setShowEditModal] = useState(false);
@@ -9,9 +10,18 @@ const OrderTable = ({ order }) => {
 
   const [shownItemName, setShownItemName] = useState('');
 
+  //check null
+  const [orderDelivery, setOrderDelivery] = useState([]);
+  const [orderDetails, setOrderDetails] = useState(null);
+  const [orderDiscount, setOrderDiscount] = useState(null);
+
+  const [orderId, setOrderId] = useState(null);
+  const [orderDetailsId, setOrderDetailsId] = useState(null);
+
   // order details
-  // const [csName, setCsName] = useState('');
-  // const [csId, setCsId] = useState(null)
+  const [orderStatus, setOrderStatus] = useState(
+    order.orderdetail && order.orderdetail.order_status
+  );
 
   useEffect(() => {
     axios
@@ -30,8 +40,81 @@ const OrderTable = ({ order }) => {
   const handleEditModal = (order, name) => {
     setShowEditModal(true);
     console.log(order);
-    console.log(name);
+    setOrderId(order.id);
+    setOrderDetailsId(order.orderdetail ? order.orderdetail.id : null);
+    // console.log(name);
     setShownItemName(name);
+    setOrderDelivery(order.orderdelivery);
+    setOrderDetails(order.orderdetail);
+    setOrderDiscount(order.orderdiscount);
+  };
+
+  const ajaxOrderDetailsPost = (postDate) => {
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}/order/order-detail/`, postDate)
+      .then((resp) => {
+        // console.log(resp.data);
+        toast.success(`Order status saved sucessfully.`, {
+          autoClose: 3000,
+        });
+        setShowEditModal(false);
+      })
+      .catch((error) => {
+        console.log(error.response);
+        toast.error(`Something went wrong, plase try again later.`, {
+          autoClose: 3000,
+        });
+        setShowEditModal(false);
+      });
+  };
+
+  const ajaxOrderDetailsPut = (postDate, id) => {
+    axios
+      .put(
+        `${process.env.REACT_APP_BASE_URL}/order/order-detail/${id}/`,
+        postDate
+      )
+      .then((resp) => {
+        // console.log(resp.data);
+        toast.success(`Order status saved sucessfully.`, {
+          autoClose: 3000,
+        });
+        setShowEditModal(false);
+      })
+      .catch((error) => {
+        console.log(error.response);
+        toast.error(`Something went wrong, plase try again later.`, {
+          autoClose: 3000,
+        });
+        setShowEditModal(false);
+      });
+  };
+
+  const handleOrderStatus = () => {
+    // console.log(orderStatus);
+    if (orderStatus === '' || orderStatus === null) {
+      toast.success(`Select Order Status.`, {
+        autoClose: 3000,
+      });
+    } else {
+      const postOrderDetails = {
+        order_status: orderStatus,
+        order: orderId,
+      };
+      const putOrderDetails = {
+        order_status: orderStatus,
+      };
+
+      if (orderDetails === null) {
+        // console.log('Post request');
+        // console.log(postOrderDetails);
+        ajaxOrderDetailsPost(postOrderDetails);
+      } else {
+        // console.log('Put request');
+        // console.log(postOrderDetails);
+        ajaxOrderDetailsPut(putOrderDetails, orderDetailsId);
+      }
+    }
   };
 
   return (
@@ -97,47 +180,88 @@ const OrderTable = ({ order }) => {
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold'>
             {order.orderdetail && order.orderdetail.mt ? (
-              order.orderdetail.mt.first_name
+              <>
+                {order.orderdetail.mt.first_name} <br />
+                <button
+                  onClick={() => handleEditModal(order, 'mt')}
+                  className='edit-order'
+                >
+                  Edit
+                </button>
+              </>
             ) : (
-              <span>&mdash;</span>
+              <button
+                onClick={() => handleEditModal(order, 'mt')}
+                className='edit-order'
+              >
+                Add
+              </button>
             )}
           </p>
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold text-capitalize'>
-            {/* {order.orderdetail && order.orderdetail.order_type === 'non_covid'
-            ? 'NON COVID'
-            : 'COVID'} */}
             {order.orderdetail && order.orderdetail.order_type ? (
-              order.orderdetail.order_type
+              <>
+                {order.orderdetail.order_type} <br />
+                <button
+                  onClick={() => handleEditModal(order, 'order_type')}
+                  className='edit-order'
+                >
+                  Edit
+                </button>
+              </>
             ) : (
-              <span>&mdash;</span>
+              <button
+                onClick={() => handleEditModal(order, 'order_type')}
+                className='edit-order'
+              >
+                Add
+              </button>
             )}
           </p>
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold text-capitalize'>
             {order.orderdetail ? (
-              order.orderdetail.references
+              <>
+                {order.orderdetail.references} <br />
+                <button
+                  onClick={() => handleEditModal(order, 'references')}
+                  className='edit-order'
+                >
+                  Edit
+                </button>
+              </>
             ) : (
-              <span>&mdash;</span>
+              <button
+                onClick={() => handleEditModal(order, 'references')}
+                className='edit-order'
+              >
+                Add
+              </button>
             )}
           </p>
         </td>
-        {/* <td className='pl-3'>
-        <p className='mb-0 font-weight-bold pr-3'>
-          Injamamul Haque <br />
-          Age: 26 <br />
-          Sex: Male <br />
-          Address: 72, Janata Housing, Ring road, Shyamoli
-        </p>
-      </td> */}
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold text-capitalize'>
             {order.orderdetail ? (
-              order.orderdetail.persona
+              <>
+                {order.orderdetail.persona} <br />
+                <button
+                  onClick={() => handleEditModal(order, 'persona')}
+                  className='edit-order'
+                >
+                  Edit
+                </button>
+              </>
             ) : (
-              <span>&mdash;</span>
+              <button
+                onClick={() => handleEditModal(order, 'persona')}
+                className='edit-order'
+              >
+                Add
+              </button>
             )}
           </p>
         </td>
@@ -215,10 +339,21 @@ const OrderTable = ({ order }) => {
                 <p className='my-2'>
                   Reasons: <br /> {order.orderdiscount.discount_note}
                 </p>
-                &mdash; Himika
+                &mdash; Himika <br />
+                <button
+                  onClick={() => handleEditModal(order, 'orderdiscount')}
+                  className='edit-order'
+                >
+                  Edit
+                </button>
               </>
             ) : (
-              <p>&mdash;</p>
+              <button
+                onClick={() => handleEditModal(order, 'orderdiscount')}
+                className='edit-order'
+              >
+                Add
+              </button>
             )}
           </div>
         </td>
@@ -228,18 +363,44 @@ const OrderTable = ({ order }) => {
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold text-capitalize'>
             {order.orderdetail ? (
-              order.orderdetail.payment_status
+              <>
+                {order.orderdetail.payment_status} <br />
+                <button
+                  onClick={() => handleEditModal(order, 'payment_status')}
+                  className='edit-order'
+                >
+                  Edit
+                </button>
+              </>
             ) : (
-              <span>&mdash;</span>
+              <button
+                onClick={() => handleEditModal(order, 'payment_status')}
+                className='edit-order'
+              >
+                Add
+              </button>
             )}
           </p>
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold pr-2'>
             {order.orderdetail ? (
-              order.orderdetail.order_note
+              <>
+                {order.orderdetail.order_note} <br />
+                <button
+                  onClick={() => handleEditModal(order, 'order_note')}
+                  className='edit-order'
+                >
+                  Edit
+                </button>
+              </>
             ) : (
-              <span>&mdash;</span>
+              <button
+                onClick={() => handleEditModal(order, 'order_note')}
+                className='edit-order'
+              >
+                Add
+              </button>
             )}
           </p>
         </td>
@@ -250,10 +411,22 @@ const OrderTable = ({ order }) => {
                 <p className='mb-0 font-weight-bold' key={i}>
                   {orderdelivery.name}
                 </p>
-              ))}
+              ))}{' '}
+              <br />
+              <button
+                onClick={() => handleEditModal(order, 'orderdelivery')}
+                className='edit-order'
+              >
+                Edit
+              </button>
             </>
           ) : (
-            <p className='mb-0 font-weight-bold'>No report</p>
+            <button
+              onClick={() => handleEditModal(order, 'orderdelivery')}
+              className='edit-order'
+            >
+              Add
+            </button>
           )}
         </td>
       </tr>
@@ -262,7 +435,7 @@ const OrderTable = ({ order }) => {
         show={showEditModal}
         onHide={() => setShowEditModal(false)}
         animation={false}
-        size='lg'
+        // size='lg'
       >
         <ModalBody>
           <div className='edit-order'>
@@ -271,173 +444,234 @@ const OrderTable = ({ order }) => {
               <table className='table'>
                 <thead>
                   <tr>
-                    {/* {shownItemName === 'order_status' && ( */}
-                    <th className='py-4 min-w-130px'>Order Status</th>
-                    {/* )} */}
-                    <th className='py-4 min-w-130px'>CS Agent</th>
-                    <th className='py-4 min-w-110px'>MT</th>
-                    <th className='py-4 min-w-110px'>Type</th>
-                    <th className='py-4 min-w-130px'>Reference</th>
-                    <th className='py-4 min-w-110px'>Persona</th>
-                    <th className='py-4 min-w-150px'>Payment Status</th>
-                    <th className='py-4 min-w-150px'>Discount</th>
-                    <th className='py-4 min-w-180px'>Report Delivery</th>
+                    {shownItemName === 'order_status' && (
+                      <th className='py-4 min-w-130px'>Order Status</th>
+                    )}
+                    {shownItemName === 'cs_agent' && (
+                      <th className='py-4 min-w-130px'>CS Agent</th>
+                    )}
+                    {shownItemName === 'mt' && (
+                      <th className='py-4 min-w-110px'>MT</th>
+                    )}
+                    {shownItemName === 'order_type' && (
+                      <th className='py-4 min-w-110px'>Type</th>
+                    )}
+                    {shownItemName === 'references' && (
+                      <th className='py-4 min-w-130px'>Reference</th>
+                    )}
+                    {shownItemName === 'persona' && (
+                      <th className='py-4 min-w-110px'>Persona</th>
+                    )}
+                    {shownItemName === 'payment_status' && (
+                      <th className='py-4 min-w-150px'>Payment Status</th>
+                    )}
+                    {shownItemName === 'order_note' && (
+                      <th className='py-4 min-w-150px'>Order Note</th>
+                    )}
+                    {shownItemName === 'orderdiscount' && (
+                      <th className='py-4 min-w-150px'>Discount</th>
+                    )}
+                    {shownItemName === 'orderdelivery' && (
+                      <th className='py-4 min-w-180px'>Report Delivery</th>
+                    )}
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td className='pl-3'>
-                      <select
-                        className='single'
-                        value={
-                          order.orderdetail && order.orderdetail.order_status
-                            ? order.orderdetail.order_status
-                            : ''
-                        }
-                      >
-                        <option value='processing'>Processing</option>
-                        <option value='confirmed'>Confirmed</option>
-                      </select>
-                    </td>
-                    <td className='pl-3'>
-                      <select
-                        className='single'
-                        value={
-                          order.orderdetail && order.orderdetail.cs_agent
-                            ? order.orderdetail.cs_agent.id
-                            : ''
-                        }
-                      >
-                        {users &&
-                          users.map((user, i) => (
-                            <option value={user.id} key={i}>
-                              {user.username}
-                            </option>
-                          ))}
-                      </select>
-                    </td>
-                    <td className='pl-3'>
-                      <select
-                        className='single'
-                        value={
-                          order.orderdetail && order.orderdetail.mt
-                            ? order.orderdetail.mt.id
-                            : ''
-                        }
-                      >
-                        {users &&
-                          users.map((user, i) => (
-                            <option value={user.id} key={i}>
-                              {user.username}
-                            </option>
-                          ))}
-                      </select>
-                    </td>
-                    <td className='pl-3'>
-                      <select
-                        value={
-                          order.orderdetail && order.orderdetail.order_type
-                            ? order.orderdetail.order_type
-                            : ''
-                        }
-                        className='single'
-                      >
-                        <option value='covid'>Covid</option>
-                        <option value='non_covid'>Non Covid</option>
-                      </select>
-                    </td>
-                    <td className='pl-3'>
-                      <textarea
-                        value={
-                          order.orderdetail && order.orderdetail.references
-                            ? order.orderdetail.references
-                            : ''
-                        }
-                      ></textarea>
-                    </td>
-                    <td className='pl-3'>
-                      <select
-                        className='single'
-                        value={
-                          order.orderdetail && order.orderdetail.persona
-                            ? order.orderdetail.persona
-                            : ''
-                        }
-                      >
-                        <option value='coronic'>Coronic</option>
-                      </select>
-                    </td>
-                    <td className='pl-3'>
-                      <select
-                        value={
-                          order.orderdetail && order.orderdetail.payment_status
-                            ? order.orderdetail.payment_status
-                            : ''
-                        }
-                        className='single'
-                      >
-                        <option value='paid'>Paid</option>
-                        <option value='unpaid'>Unpaid</option>
-                      </select>
-                    </td>
-                    <td className='pl-3'>
-                      <input
-                        type='number'
-                        placeholder='discount price'
-                        className='txt'
-                        value={
-                          order.orderdiscount &&
-                          order.orderdiscount.discount_price
-                            ? order.orderdiscount.discount_price
-                            : ''
-                        }
-                      />
-                      <textarea
-                        name=''
-                        placeholder='discount note'
-                        value={
-                          order.orderdiscount &&
-                          order.orderdiscount.discount_note
-                            ? order.orderdiscount.discount_note
-                            : ''
-                        }
-                      ></textarea>
-                      <p className='font-weight-bold my-1 ml-1'>By:</p>
-                      <select
-                        style={{ width: '100%' }}
-                        className='single'
-                        value={
-                          order.orderdiscount && order.orderdiscount.discount_by
-                            ? order.orderdiscount.discount_by.id
-                            : ''
-                        }
-                      >
-                        {users &&
-                          users.map((user, i) => (
-                            <option value={user.id} key={i}>
-                              {user.username}
-                            </option>
-                          ))}
-                      </select>
-                    </td>
-                    <td className='pl-3'>
-                      <select className='single'>
-                        <option value='order_received'>Order Received</option>
-                        <option value='sample_collected'>
-                          Sample Collected
-                        </option>
-                        <option value='sample_delivered_to_lab'>
-                          Sample Delivered to Lab
-                        </option>
-                        <option value='completed'>Completed</option>
-                        <option value='on_hold'>On Hold</option>
-                        <option value='cancel'>Cancel</option>
-                      </select>
-                    </td>
+                    {shownItemName === 'order_status' && (
+                      <td className='pl-3'>
+                        <select
+                          className='single'
+                          // value={
+                          //   order.orderdetail && order.orderdetail.order_status
+                          //     ? order.orderdetail.order_status
+                          //     : ''
+                          // }
+                          value={orderStatus || ''}
+                          onChange={(e) => setOrderStatus(e.target.value)}
+                        >
+                          <option value=''>Select order status</option>
+                          <option value='processing'>Processing</option>
+                          <option value='confirmed'>Confirmed</option>
+                        </select>{' '}
+                        <br />
+                        <button
+                          className='btn btn-primary btn-sm mt-2'
+                          onClick={handleOrderStatus}
+                        >
+                          Save
+                        </button>
+                      </td>
+                    )}
+                    {shownItemName === 'cs_agent' && (
+                      <td className='pl-3'>
+                        <select
+                          className='single'
+                          value={
+                            order.orderdetail && order.orderdetail.cs_agent
+                              ? order.orderdetail.cs_agent.id
+                              : ''
+                          }
+                        >
+                          {users &&
+                            users.map((user, i) => (
+                              <option value={user.id} key={i}>
+                                {user.username}
+                              </option>
+                            ))}
+                        </select>
+                      </td>
+                    )}
+                    {shownItemName === 'mt' && (
+                      <td className='pl-3'>
+                        <select
+                          className='single'
+                          value={
+                            order.orderdetail && order.orderdetail.mt
+                              ? order.orderdetail.mt.id
+                              : ''
+                          }
+                        >
+                          {users &&
+                            users.map((user, i) => (
+                              <option value={user.id} key={i}>
+                                {user.username}
+                              </option>
+                            ))}
+                        </select>
+                      </td>
+                    )}
+                    {shownItemName === 'order_type' && (
+                      <td className='pl-3'>
+                        <select
+                          value={
+                            order.orderdetail && order.orderdetail.order_type
+                              ? order.orderdetail.order_type
+                              : ''
+                          }
+                          className='single'
+                        >
+                          <option value='covid'>Covid</option>
+                          <option value='non_covid'>Non Covid</option>
+                        </select>
+                      </td>
+                    )}
+                    {shownItemName === 'references' && (
+                      <td className='pl-3'>
+                        <textarea
+                          value={
+                            order.orderdetail && order.orderdetail.references
+                              ? order.orderdetail.references
+                              : ''
+                          }
+                        ></textarea>
+                      </td>
+                    )}
+                    {shownItemName === 'persona' && (
+                      <td className='pl-3'>
+                        <select
+                          className='single'
+                          value={
+                            order.orderdetail && order.orderdetail.persona
+                              ? order.orderdetail.persona
+                              : ''
+                          }
+                        >
+                          <option value='coronic'>Coronic</option>
+                        </select>
+                      </td>
+                    )}
+                    {shownItemName === 'payment_status' && (
+                      <td className='pl-3'>
+                        <select
+                          value={
+                            order.orderdetail &&
+                            order.orderdetail.payment_status
+                              ? order.orderdetail.payment_status
+                              : ''
+                          }
+                          className='single'
+                        >
+                          <option value='paid'>Paid</option>
+                          <option value='unpaid'>Unpaid</option>
+                        </select>
+                      </td>
+                    )}
+                    {shownItemName === 'order_note' && (
+                      <td className='pl-3'>
+                        <textarea
+                          value={
+                            order.orderdetail && order.orderdetail.order_note
+                              ? order.orderdetail.order_note
+                              : ''
+                          }
+                        ></textarea>
+                      </td>
+                    )}
+                    {shownItemName === 'orderdiscount' && (
+                      <td className='pl-3'>
+                        <input
+                          type='number'
+                          placeholder='discount price'
+                          className='txt'
+                          value={
+                            order.orderdiscount &&
+                            order.orderdiscount.discount_price
+                              ? order.orderdiscount.discount_price
+                              : ''
+                          }
+                        />
+                        <textarea
+                          name=''
+                          placeholder='discount note'
+                          value={
+                            order.orderdiscount &&
+                            order.orderdiscount.discount_note
+                              ? order.orderdiscount.discount_note
+                              : ''
+                          }
+                        ></textarea>
+                        <p className='font-weight-bold my-1 ml-1'>By:</p>
+                        <select
+                          style={{ width: '100%' }}
+                          className='single'
+                          value={
+                            order.orderdiscount &&
+                            order.orderdiscount.discount_by
+                              ? order.orderdiscount.discount_by.id
+                              : ''
+                          }
+                        >
+                          {users &&
+                            users.map((user, i) => (
+                              <option value={user.id} key={i}>
+                                {user.username}
+                              </option>
+                            ))}
+                        </select>
+                      </td>
+                    )}
+                    {shownItemName === 'orderdelivery' && (
+                      <td className='pl-3'>
+                        <select className='single'>
+                          <option value='order_received'>Order Received</option>
+                          <option value='sample_collected'>
+                            Sample Collected
+                          </option>
+                          <option value='sample_delivered_to_lab'>
+                            Sample Delivered to Lab
+                          </option>
+                          <option value='completed'>Completed</option>
+                          <option value='on_hold'>On Hold</option>
+                          <option value='cancel'>Cancel</option>
+                        </select>
+                      </td>
+                    )}
                   </tr>
                 </tbody>
               </table>
             </div>
+            {/* <button className='btn btn-primary btn-sm'>Save</button> */}
           </div>
         </ModalBody>
       </Modal>
