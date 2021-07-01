@@ -15,11 +15,11 @@ const SearchTests = ({ testType, setAllLabs }) => {
   const promiseOptions = (inputValue) =>
     new Promise((resolve) => {
       // resolve(filterUsers(inputValue));
-      //   if (testType === 'diagnostic') {
-      //     let url = 'diagnostic-test-item';
-      //   } else if (testType === 'diagnostic') {
-      //     let url = 'diagnostic-package/';
-      //   }
+      // if (testType === 'diagnostic') {
+      //   var url = 'diagnostic-test-item';
+      // } else if (testType === 'package') {
+      //   var url = 'diagnostic-package';
+      // }
       axios
         .get(
           `${process.env.REACT_APP_BASE_URL}/diagnostic/diagnostic-test-item/?search=${inputValue}`

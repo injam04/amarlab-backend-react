@@ -17,6 +17,17 @@ body {
   cursor: pointer;
 }
 
+button.edit-order {
+  border: none;
+  background: #1bc5bd;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 5px;
+  margin-top: 3px;
+  padding: 0px 6px;
+  outline: none !important;
+}
+
 /* ======================================================================= */
 /*================================= Login =================================*/
 /* ======================================================================= */
@@ -576,13 +587,43 @@ body {
   background-color: transparent;
 }
 
+.modal .edit-order tbody select.single {
+  width: 130px;
+  border: none;
+  outline: none;
+  border: 1px solid #777;
+  border-radius: 5px;
+  padding: 5px;
+  background-color: transparent;
+}
+
+.modal .edit-order tbody textarea {
+  border: none;
+  outline: none;
+  border: 1px solid #777;
+  border-radius: 5px;
+  padding: 5px;
+  height: 75px;
+}
+
+/* .modal .edit-order tbody input[type='text'] { */
+.modal .edit-order tbody input.txt {
+  width: 247px;
+  border: none;
+  outline: none;
+  border: 1px solid #777;
+  border-radius: 5px;
+  padding: 6px 5px;
+  margin-bottom: 10px;
+}
+
 .modal .create-order tbody .add-user .css-2b097c-container {
   width: 230px;
 }
 
-.css-yk16xz-control {
-  /* width: 230px; */
-}
+/* .css-yk16xz-control {
+  width: 230px;
+} */
 
 .create-order-lab-pat .patientsss label.single {
   display: block;

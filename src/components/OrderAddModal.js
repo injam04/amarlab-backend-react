@@ -14,7 +14,7 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const [testType, setTestType] = useState('package');
+  const [testType, setTestType] = useState('diagnostic');
 
   const [orders, setOrders] = useState([]);
 
