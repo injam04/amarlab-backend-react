@@ -46,12 +46,32 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
   const [patientDob, setPatientDob] = useState(null);
 
   const getTotalPrice = (array) => {
-    const price = array.reduce((total, item) => {
-      return total + parseInt(item.test_item.purchasable_order_item.sell_price);
-    }, 0);
+    // const price = array.reduce((total, item) => {
+    //   return total + parseInt(item.test_item.purchasable_order_item.sell_price);
+    // }, 0);
 
-    // console.log(price);
-    return price;
+    const diagnosticrr = array.filter((diag) => {
+      return diag.order_type === 'diagnostic';
+    });
+
+    const packagerr = array.filter((diag) => {
+      return diag.order_type === 'package';
+    });
+
+    const diagprice = diagnosticrr.reduce(
+      (total, item) =>
+        total + parseInt(item.test_item.purchasable_order_item.sell_price),
+      0
+    );
+
+    const packprice = packagerr.reduce(
+      (total, item) =>
+        total +
+        parseInt(item.test_item.test_item.purchasable_order_item.sell_price),
+      0
+    );
+
+    return diagprice + packprice;
   };
 
   const handleUserCreation = (e) => {
@@ -172,11 +192,13 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
 
     const carts = orderPatients.map((person) => {
       return {
-        order_type: 'diagnostic',
+        order_type: labDetails.order_type,
         patient: person,
         test_item: labDetails,
       };
     });
+
+    // console.log(carts);
 
     // const order = {
     //   user: userDetails,
@@ -232,7 +254,10 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
               patient: order.patient.id,
               order_type: order.order_type,
               address: resp.data.id,
-              purchasable_order_item: order.test_item.purchasable_order_item.id,
+              purchasable_order_item:
+                order.order_type === 'package'
+                  ? `${order.test_item.test_item.purchasable_order_item.id}`
+                  : `${order.test_item.purchasable_order_item.id}`,
             };
           });
 
@@ -464,7 +489,10 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                             orders.map((order, i) => (
                               <div key={i} className='mb-2'>
                                 <div className='items'>
-                                  &mdash; {order.test_item.diagnostic_test.name}{' '}
+                                  &mdash;{' '}
+                                  {order.order_type === 'package'
+                                    ? `${order.test_item.package.name}`
+                                    : `${order.test_item.diagnostic_test.name}`}{' '}
                                   <i
                                     className='fas fa-times ml-1 text-danger pointer'
                                     onClick={() => handleDeleteOrder(order)}
@@ -472,13 +500,16 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                                   <br />
                                   <span className='text-dark-50'>
                                     Price: ৳ BDT{' '}
-                                    {
-                                      order.test_item.purchasable_order_item
-                                        .sell_price
-                                    }
+                                    {order.order_type === 'package'
+                                      ? `${order.test_item.test_item.purchasable_order_item.sell_price}`
+                                      : `${order.test_item.purchasable_order_item.sell_price}`}
                                   </span>{' '}
                                   <br />
-                                  Lab: {order.test_item.branch.lab.name} <br />
+                                  Lab:
+                                  {order.order_type === 'package'
+                                    ? `${order.test_item.test_item.branch.lab.name}`
+                                    : `${order.test_item.branch.lab.name}`}
+                                  <br />
                                   Patient: {order.patient.full_name}
                                 </div>
                               </div>
