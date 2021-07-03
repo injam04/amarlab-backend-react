@@ -625,6 +625,22 @@ button.edit-order {
   width: 230px;
 } */
 
+.create-order-lab-pat {
+  position: relative;
+}
+
+.create-order-lab-pat i.close {
+  position: absolute;
+  top: 15px;
+  right: 23px;
+  color: red !important;
+  font-size: 23px;
+}
+
+.create-order-lab-pat i.close:hover {
+  color: red !important;
+}
+
 .create-order-lab-pat .patientsss label.single {
   display: block;
   position: relative;

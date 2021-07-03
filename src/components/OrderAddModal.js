@@ -13,6 +13,7 @@ import TimeSelect from './TimeSelect';
 const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showUserAddForm, setShowUserAddForm] = useState(false);
 
   const [testType, setTestType] = useState('diagnostic');
 
@@ -148,6 +149,7 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
 
   const handleUserDetails = () => {
     setUserDetails(null);
+    setOrders([]);
   };
 
   const handleFamilyMember = (e, patient) => {
@@ -187,69 +189,93 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
   };
 
   const handleOrderSave = () => {
-    const postAddress = {
-      district: district,
-      thana: thana,
-      address: address,
-      mobile: mobile,
-      email: email,
-    };
+    const numberPattern = /^01\d{9}$/;
 
-    axios
-      .post(
-        `${process.env.REACT_APP_BASE_URL}/user_management/address/`,
-        postAddress
-      )
-      .then((resp) => {
-        console.log(resp.data.id);
-        const order_items = orders.map((order) => {
-          return {
-            patient: order.patient.id,
-            order_type: order.order_type,
-            address: resp.data.id,
-            purchasable_order_item: order.test_item.purchasable_order_item.id,
-          };
-        });
-
-        const postOrder = {
-          user: userDetails.id,
-          date: moment(sampleDate).format('YYYY-MM-DD'),
-          time: moment(sampleTime).format('hh:mm A'),
-          orderitem: order_items,
-          total_price: getTotalPrice(orders),
-        };
-
-        axios
-          .post(`${process.env.REACT_APP_BASE_URL}/order/order/`, postOrder)
-          .then((resp) => {
-            console.log(resp.data);
-            setUserDetails(null);
-            setOrders([]);
-            setMobile('');
-            setEmail('');
-            setDistrict('dhaka');
-            setThana('');
-            setAddress('');
-            setSampleDate(null);
-            setSampleTime(null);
-            setShowAddModal(false);
-            toast.success('Order places successfully.', {
-              autoClose: 3000,
-            });
-          })
-          .catch((error) => {
-            console.log(error.response);
-          });
-      })
-      .catch((error) => {
-        if (error.response.status === 400) {
-          if (error.response.data.address) {
-            toast.error(`Address: ${error.response.data.address[0]}`, {
-              autoClose: 3000,
-            });
-          }
-        }
+    if (!numberPattern.test(mobile)) {
+      toast.error('Please enter a valid mobile number.', {
+        autoClose: 3000,
       });
+    } else if (district.trim() === '') {
+      toast.error('Please select location district.', {
+        autoClose: 3000,
+      });
+    } else if (thana.trim() === '') {
+      toast.error('Please enter location area.', {
+        autoClose: 3000,
+      });
+    } else if (address.trim() === '') {
+      toast.error('Please enter location details.', {
+        autoClose: 3000,
+      });
+    } else if (sampleDate === '' || sampleDate === null) {
+      toast.error('Please select date.', {
+        autoClose: 3000,
+      });
+    } else {
+      const postAddress = {
+        district: district,
+        thana: thana,
+        address: address,
+        mobile: mobile,
+        email: email,
+      };
+
+      axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/user_management/address/`,
+          postAddress
+        )
+        .then((resp) => {
+          console.log(resp.data.id);
+          const order_items = orders.map((order) => {
+            return {
+              patient: order.patient.id,
+              order_type: order.order_type,
+              address: resp.data.id,
+              purchasable_order_item: order.test_item.purchasable_order_item.id,
+            };
+          });
+
+          const postOrder = {
+            user: userDetails.id,
+            date: moment(sampleDate).format('YYYY-MM-DD'),
+            time: moment(sampleTime).format('hh:mm A'),
+            orderitem: order_items,
+            total_price: getTotalPrice(orders),
+          };
+
+          axios
+            .post(`${process.env.REACT_APP_BASE_URL}/order/order/`, postOrder)
+            .then((resp) => {
+              console.log(resp.data);
+              setUserDetails(null);
+              setOrders([]);
+              setMobile('');
+              setEmail('');
+              setDistrict('dhaka');
+              setThana('');
+              setAddress('');
+              setSampleDate(null);
+              setSampleTime(null);
+              setShowAddModal(false);
+              toast.success('Order places successfully.', {
+                autoClose: 3000,
+              });
+            })
+            .catch((error) => {
+              console.log(error.response);
+            });
+        })
+        .catch((error) => {
+          if (error.response.status === 400) {
+            if (error.response.data.address) {
+              toast.error(`Address: ${error.response.data.address[0]}`, {
+                autoClose: 3000,
+              });
+            }
+          }
+        });
+    }
   };
 
   const handleDeleteOrder = (order) => {
@@ -301,6 +327,19 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
     }
   };
 
+  const handleOrderClear = () => {
+    // console.log('clear order modal');
+    setOrders([]);
+    setUserDetails(null);
+    setMobile('');
+    setEmail('');
+    setDistrict('dhaka');
+    setThana('');
+    setAddress('');
+    setSampleDate(null);
+    setSampleTime(null);
+  };
+
   return (
     <>
       <Modal
@@ -311,8 +350,16 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
       >
         <ModalBody>
           <div className='create-order'>
-            <h5>Add New Order</h5>
-            <div className='table-responsive'>
+            <div className='pl-4 mb-3 d-flex justify-content-between align-items-center'>
+              <h5>Add New Order</h5>
+              <button
+                className='btn btn-sm btn-danger'
+                onClick={() => setShowAddModal(false)}
+              >
+                Close
+              </button>
+            </div>
+            <div className='table-responsive' style={{ minHeight: '250px' }}>
               <table className='table'>
                 <thead>
                   <tr>
@@ -351,32 +398,61 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                           </p>
                         ) : (
                           <>
-                            <SelectUser
-                              setUserDetails={setUserDetails}
-                              setUserPatients={setUserPatients}
-                            />
-                            <p className='my-3 pl-1'>Or, Add new user?</p>
-                            <form onSubmit={handleUserCreation}>
-                              <div className='form-group mb-2 mt-2'>
-                                <input
-                                  type='text'
-                                  placeholder='username'
-                                  value={username}
-                                  onChange={(e) => setUsername(e.target.value)}
+                            {!showUserAddForm && (
+                              <>
+                                <SelectUser
+                                  setUserDetails={setUserDetails}
+                                  setUserPatients={setUserPatients}
                                 />
-                              </div>
-                              <div className='form-group mb-2'>
-                                <input
-                                  type='password'
-                                  placeholder='password'
-                                  value={password}
-                                  onChange={(e) => setPassword(e.target.value)}
-                                />
-                              </div>
-                              <button className='btn btn-success btn-sm'>
-                                Create
-                              </button>
-                            </form>
+                                <p className='my-3 pl-1'>
+                                  Or,{' '}
+                                  <span
+                                    className='pointer'
+                                    onClick={() => setShowUserAddForm(true)}
+                                  >
+                                    Add new user?
+                                  </span>
+                                </p>
+                              </>
+                            )}
+                            {showUserAddForm && (
+                              <>
+                                <form onSubmit={handleUserCreation}>
+                                  <div className='form-group mb-2 mt-2'>
+                                    <input
+                                      type='text'
+                                      placeholder='username'
+                                      value={username}
+                                      onChange={(e) =>
+                                        setUsername(e.target.value)
+                                      }
+                                    />
+                                  </div>
+                                  <div className='form-group mb-2'>
+                                    <input
+                                      type='password'
+                                      placeholder='password'
+                                      value={password}
+                                      onChange={(e) =>
+                                        setPassword(e.target.value)
+                                      }
+                                    />
+                                  </div>
+                                  <button className='btn btn-success btn-sm'>
+                                    Create
+                                  </button>
+                                </form>
+                                <p className='my-3 pl-1'>
+                                  Or,{' '}
+                                  <span
+                                    className='pointer'
+                                    onClick={() => setShowUserAddForm(false)}
+                                  >
+                                    select existing user?
+                                  </span>
+                                </p>
+                              </>
+                            )}
                           </>
                         )}
                       </div>
@@ -445,7 +521,7 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                         <input
                           className='my-2'
                           type='text'
-                          placeholder='enter thana'
+                          placeholder='location area'
                           value={thana}
                           onChange={(e) => setThana(e.target.value)}
                         />
@@ -473,10 +549,17 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                     {orders.length !== 0 && (
                       <td className='pl-3'>
                         <button
-                          className='btn btn-primary btn-sm'
+                          className='btn btn-primary btn-sm mb-3'
                           onClick={handleOrderSave}
                         >
-                          Save Order
+                          Confirm Order
+                        </button>
+                        <button
+                          type='button'
+                          className='btn btn-danger btn-sm'
+                          onClick={handleOrderClear}
+                        >
+                          Clear
                         </button>
                       </td>
                     )}
@@ -494,6 +577,10 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
         onHide={() => setShowTestModal(false)}
       >
         <ModalBody className='create-order-lab-pat'>
+          <i
+            className='fas fa-times-circle close'
+            onClick={() => setShowTestModal(false)}
+          ></i>
           <h5>Select Test type</h5>
           <select
             className='form-control my-3'

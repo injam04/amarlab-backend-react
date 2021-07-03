@@ -439,7 +439,15 @@ const OrderTable = ({ order }) => {
       >
         <ModalBody>
           <div className='edit-order'>
-            <h5>Edit Order</h5>
+            <div className='pl-3 d-flex justify-content-between align-items-center'>
+              <h5>Edit Order</h5>
+              <button
+                className='btn btn-sm btn-danger'
+                onClick={() => setShowEditModal(false)}
+              >
+                Close
+              </button>
+            </div>
             <div className='table-responsive'>
               <table className='table'>
                 <thead>
