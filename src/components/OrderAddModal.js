@@ -433,7 +433,7 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                                 <p className='my-3 pl-1'>
                                   Or,{' '}
                                   <span
-                                    className='pointer'
+                                    className='pointer text-primary'
                                     onClick={() => setShowUserAddForm(true)}
                                   >
                                     Add new user?
@@ -471,7 +471,7 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                                 <p className='my-3 pl-1'>
                                   Or,{' '}
                                   <span
-                                    className='pointer'
+                                    className='pointer text-primary'
                                     onClick={() => setShowUserAddForm(false)}
                                   >
                                     select existing user?

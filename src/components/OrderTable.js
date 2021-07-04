@@ -6,9 +6,10 @@ import { Modal, ModalBody } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 
 const OrderTable = ({ order }) => {
-  const [mainOrder] = useState(order);
+  const [mainOrder, setMainOrder] = useState(order);
   const [showEditModal, setShowEditModal] = useState(false);
   const [users, setUsers] = useState(null);
+  const [orderManager, setOrderManager] = useState(null);
 
   const [shownItemName, setShownItemName] = useState('');
 
@@ -64,6 +65,9 @@ const OrderTable = ({ order }) => {
       mainOrder.orderdiscount.discount_by.id
   );
 
+  // order delivery
+  const [reportDelivery, setReportDelivery] = useState('');
+
   useEffect(() => {
     axios
       .get(
@@ -76,7 +80,30 @@ const OrderTable = ({ order }) => {
       .catch((error) => {
         console.log(error.response);
       });
+
+    axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/user_management/user/?groups__name=Order%20Manager&page=1&limit=1000000&ofset=0`
+      )
+      .then((resp) => {
+        // console.log(resp.data.results);
+        setOrderManager(resp.data.results);
+      });
   }, []);
+
+  const _toSpace = (string) => {
+    let newStr = string.replace('_', ' ');
+    return newStr;
+  };
+
+  const getSingleOrderTree = (id) => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}/order/order-tree/${id}`)
+      .then((resp) => {
+        // console.log(resp.data);
+        setMainOrder(resp.data);
+      });
+  };
 
   const handleEditModal = (order, name) => {
     setShowEditModal(true);
@@ -96,7 +123,7 @@ const OrderTable = ({ order }) => {
       .post(`${process.env.REACT_APP_BASE_URL}/order/order-detail/`, postDate)
       .then((resp) => {
         // console.log(resp.data);
-        mainOrder.orderdetail = resp.data;
+        getSingleOrderTree(resp.data.order);
         toast.success(`Order status saved sucessfully.`, {
           autoClose: 3000,
         });
@@ -119,6 +146,7 @@ const OrderTable = ({ order }) => {
       )
       .then((resp) => {
         // console.log(resp.data);
+        getSingleOrderTree(resp.data.order);
         mainOrder.orderdetail = resp.data;
         toast.success(`Order status saved sucessfully.`, {
           autoClose: 3000,
@@ -310,8 +338,7 @@ const OrderTable = ({ order }) => {
     axios
       .post(`${process.env.REACT_APP_BASE_URL}/order/order-discount/`, postDate)
       .then((resp) => {
-        // console.log(resp.data);
-        mainOrder.orderdiscount = resp.data;
+        getSingleOrderTree(resp.data.order);
         toast.success(`Order discount saved sucessfully.`, {
           autoClose: 3000,
         });
@@ -334,7 +361,7 @@ const OrderTable = ({ order }) => {
       )
       .then((resp) => {
         // console.log(resp.data);
-        mainOrder.orderdiscount = resp.data;
+        getSingleOrderTree(resp.data.order);
         toast.success(`Order discount saved sucessfully.`, {
           autoClose: 3000,
         });
@@ -381,6 +408,51 @@ const OrderTable = ({ order }) => {
         ajaxOrderDiscountPut(putOrderDiscount, orderDiscountId);
         // console.log(putOrderDiscount);
       }
+    }
+  };
+
+  const handleReportDelivery = () => {
+    if (reportDelivery === '' || reportDelivery === null) {
+      toast.error(`Please select delivery status.`, {
+        autoClose: 3000,
+      });
+    } else {
+      const postOrderDelivery = {
+        order: orderId,
+        name: reportDelivery,
+      };
+
+      axios
+        .post(
+          `${process.env.REACT_APP_BASE_URL}/order/order-delivery-status/`,
+          postOrderDelivery
+        )
+        .then((resp) => {
+          // console.log(resp.data);
+          mainOrder.orderdelivery.push(resp.data);
+          toast.success(`Report delivery saved sucessfully.`, {
+            autoClose: 3000,
+          });
+          setShowEditModal(false);
+        })
+        .catch((error) => {
+          console.log(error.response);
+          toast.error(`Something went wrong, plase try again later.`, {
+            autoClose: 3000,
+          });
+          setShowEditModal(false);
+        });
+
+      // const putOrderDelivery = {
+      //   name: reportDelivery,
+      // };
+      // if (orderDelivery.length === 0) {
+      //   // ajaxOrderDiscountPost(postOrderDiscount);
+      //   console.log(postOrderDelivery);
+      // } else {
+      //   // ajaxOrderDiscountPut(putOrderDiscount, orderDiscountId);
+      //   console.log(putOrderDelivery);
+      // }
     }
   };
 
@@ -470,7 +542,7 @@ const OrderTable = ({ order }) => {
           <p className='mb-0 font-weight-bold text-capitalize'>
             {mainOrder.orderdetail && mainOrder.orderdetail.order_type ? (
               <>
-                {mainOrder.orderdetail.order_type} <br />
+                {_toSpace(mainOrder.orderdetail.order_type)} <br />
                 <button
                   onClick={() => handleEditModal(mainOrder, 'order_type')}
                   className='edit-order'
@@ -672,16 +744,16 @@ const OrderTable = ({ order }) => {
           </p>
         </td>
         <td className='pl-3'>
-          {order.orderdelivery.length !== 0 ? (
+          {mainOrder.orderdelivery.length !== 0 ? (
             <>
-              {order.orderdelivery.map((orderdelivery, i) => (
-                <p className='mb-0 font-weight-bold' key={i}>
-                  {orderdelivery.name}
+              {mainOrder.orderdelivery.map((orderdelivery, i) => (
+                <p className='mb-0 font-weight-bold text-capitalize' key={i}>
+                  {_toSpace(orderdelivery.name)}
                 </p>
               ))}{' '}
               <br />
               <button
-                onClick={() => handleEditModal(order, 'orderdelivery')}
+                onClick={() => handleEditModal(mainOrder, 'orderdelivery')}
                 className='edit-order'
               >
                 Edit
@@ -689,7 +761,7 @@ const OrderTable = ({ order }) => {
             </>
           ) : (
             <button
-              onClick={() => handleEditModal(order, 'orderdelivery')}
+              onClick={() => handleEditModal(mainOrder, 'orderdelivery')}
               className='edit-order'
             >
               Add
@@ -780,8 +852,8 @@ const OrderTable = ({ order }) => {
                           value={csAgent || ''}
                           onChange={(e) => setCsAgent(e.target.value)}
                         >
-                          {users &&
-                            users.map((user, i) => (
+                          {orderManager &&
+                            orderManager.map((user, i) => (
                               <option value={user.id} key={i}>
                                 {user.username}
                               </option>
@@ -933,8 +1005,8 @@ const OrderTable = ({ order }) => {
                           value={orderDiscountBy || ''}
                           onChange={(e) => setOrderDiscountBy(e.target.value)}
                         >
-                          {users &&
-                            users.map((user, i) => (
+                          {orderManager &&
+                            orderManager.map((user, i) => (
                               <option value={user.id} key={i}>
                                 {user.username}
                               </option>
@@ -951,7 +1023,11 @@ const OrderTable = ({ order }) => {
                     )}
                     {shownItemName === 'orderdelivery' && (
                       <td className='pl-3'>
-                        <select className='single'>
+                        <select
+                          className='single'
+                          onChange={(e) => setReportDelivery(e.target.value)}
+                        >
+                          <option value=''>Select delivery status</option>
                           <option value='order_received'>Order Received</option>
                           <option value='sample_collected'>
                             Sample Collected
@@ -963,6 +1039,13 @@ const OrderTable = ({ order }) => {
                           <option value='on_hold'>On Hold</option>
                           <option value='cancel'>Cancel</option>
                         </select>
+                        <br />
+                        <button
+                          className='btn btn-primary btn-sm mt-2'
+                          onClick={handleReportDelivery}
+                        >
+                          Save
+                        </button>
                       </td>
                     )}
                   </tr>
