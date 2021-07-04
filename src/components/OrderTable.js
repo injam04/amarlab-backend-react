@@ -456,6 +456,20 @@ const OrderTable = ({ order }) => {
     }
   };
 
+  const handleOrItDlt = (item) => {
+    const orderId = item.order.id;
+    // console.log(orderId);
+    axios
+      .delete(`${process.env.REACT_APP_BASE_URL}/order/order-item/${item.id}/`)
+      .then((resp) => {
+        // console.log(resp.data);
+        getSingleOrderTree(orderId);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  };
+
   return (
     <>
       <tr>
@@ -605,57 +619,66 @@ const OrderTable = ({ order }) => {
           </p>
         </td>
         <td className='pl-3'>
-          <p className='mb-0 font-weight-bold pr-2'>
-            {order.orderitem[0].address.mobile || ''}
-            <br /> {order.orderitem[0].address.email || ''}
-          </p>
+          {mainOrder.orderitem.length !== 0 && (
+            <p className='mb-0 font-weight-bold pr-2'>
+              {mainOrder.orderitem[0].address.mobile || ''}
+              <br /> {mainOrder.orderitem[0].address.email || ''}
+            </p>
+          )}
         </td>
         <td className='pl-3'>
-          <p className='mb-0 font-weight-bold'>
-            {order.orderitem[0].address.address
-              ? `${order.orderitem[0].address.address}, `
-              : ''}
-            {`${order.orderitem[0].address.thana}, `}
-            {order.orderitem[0].address.district}
-          </p>
+          {mainOrder.orderitem.length !== 0 && (
+            <p className='mb-0 font-weight-bold'>
+              {mainOrder.orderitem[0].address.address
+                ? `${mainOrder.orderitem[0].address.address}, `
+                : ''}
+              {`${mainOrder.orderitem[0].address.thana}, `}
+              {mainOrder.orderitem[0].address.district}
+            </p>
+          )}
         </td>
         <td className='pl-3'>
           <div className='mb-0 font-weight-bold'>
-            {order.orderitem.map((item, i) => (
-              <div key={i} className='mb-2'>
-                <div className='items'>
-                  &mdash;{' '}
-                  {
-                    item.purchasable_order_item.testitem_purchasable_oi
-                      .diagnostic_test.name
-                  }{' '}
-                  <br />{' '}
-                  <span className='text-dark-50'>
-                    Price: ৳ BDT {item.purchasable_order_item.sell_price}
-                  </span>{' '}
-                  <br />
-                  Lab:{' '}
-                  {
-                    item.purchasable_order_item.testitem_purchasable_oi.branch
-                      .lab.name
-                  }{' '}
-                  <br /> Patient: {item.patient.full_name}
+            {mainOrder.orderitem &&
+              mainOrder.orderitem.map((item, i) => (
+                <div key={i} className='mb-2'>
+                  <div className='items'>
+                    <span className=' d-flex align-items-end'>
+                      &mdash;{' '}
+                      {
+                        item.purchasable_order_item.testitem_purchasable_oi
+                          .diagnostic_test.name
+                      }{' '}
+                      <i
+                        onClick={() => handleOrItDlt(item)}
+                        className='fas fa-times text-danger pointer ml-2'
+                      ></i>
+                    </span>
+                    <span className='text-dark-50'>
+                      Price: ৳ BDT {item.purchasable_order_item.sell_price}
+                    </span>{' '}
+                    <br />
+                    Lab:{' '}
+                    {
+                      item.purchasable_order_item.testitem_purchasable_oi.branch
+                        .lab.name
+                    }{' '}
+                    <br /> Patient: {item.patient.full_name}
+                  </div>
                 </div>
-              </div>
-            ))}
-            <div className='items mt-3'>
+              ))}
+            {/* <div className='items mt-3'>
               &mdash; Service Fee: <br />{' '}
               <span className='text-dark-50'>৳ BDT 960</span> <br />
-            </div>
+            </div> */}
             <div className='items mt-3'>
-              *{' '}
-              <a href='?#' className='text-dark'>
-                Test Add,
-              </a>
-              <br />*{' '}
+              <button className='btn edit-order py-1 btn-primary'>
+                Test Add
+              </button>
+              {/* <br />*{' '}
               <a href='?#' className='text-dark'>
                 Test Remove
-              </a>
+              </a> */}
             </div>
           </div>
         </td>
@@ -666,7 +689,7 @@ const OrderTable = ({ order }) => {
           </p>
         </td>
         <td className='pl-3'>
-          <p className='mb-0 font-weight-bold'>BDT {order.total_price}</p>
+          <p className='mb-0 font-weight-bold'>BDT {mainOrder.total_price}</p>
         </td>
         <td className='pl-3'>
           <div className='mb-0 font-weight-bold'>
