@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { parseInt } from 'lodash';
 import moment from 'moment';
 import { useState, useEffect } from 'react';
 import { Modal, ModalBody } from 'react-bootstrap';
@@ -18,6 +19,7 @@ const OrderTable = ({ order }) => {
 
   const [orderId, setOrderId] = useState(null);
   const [orderDetailsId, setOrderDetailsId] = useState(null);
+  const [orderDiscountId, setOrderDiscountId] = useState(null);
 
   // order details
   const [orderStatus, setOrderStatus] = useState(
@@ -49,6 +51,19 @@ const OrderTable = ({ order }) => {
     mainOrder.orderdetail && mainOrder.orderdetail.order_note
   );
 
+  // order discount
+  const [orderDiscountNote, setOrderDiscountNote] = useState(
+    mainOrder.orderdiscount && mainOrder.orderdiscount.discount_note
+  );
+  const [orderDiscountPrice, setOrderDiscountPrice] = useState(
+    mainOrder.orderdiscount && mainOrder.orderdiscount.discount_price
+  );
+  const [orderDiscountBy, setOrderDiscountBy] = useState(
+    mainOrder.orderdiscount &&
+      mainOrder.orderdiscount.discount_by &&
+      mainOrder.orderdiscount.discount_by.id
+  );
+
   useEffect(() => {
     axios
       .get(
@@ -68,6 +83,7 @@ const OrderTable = ({ order }) => {
     console.log(order);
     setOrderId(order.id);
     setOrderDetailsId(order.orderdetail ? order.orderdetail.id : null);
+    setOrderDiscountId(order.orderdiscount ? order.orderdiscount.id : null);
     // console.log(name);
     setShownItemName(name);
     setOrderDelivery(order.orderdelivery);
@@ -290,6 +306,84 @@ const OrderTable = ({ order }) => {
     }
   };
 
+  const ajaxOrderDiscountPost = (postDate) => {
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}/order/order-discount/`, postDate)
+      .then((resp) => {
+        // console.log(resp.data);
+        mainOrder.orderdiscount = resp.data;
+        toast.success(`Order discount saved sucessfully.`, {
+          autoClose: 3000,
+        });
+        setShowEditModal(false);
+      })
+      .catch((error) => {
+        console.log(error.response);
+        toast.error(`Something went wrong, plase try again later.`, {
+          autoClose: 3000,
+        });
+        setShowEditModal(false);
+      });
+  };
+
+  const ajaxOrderDiscountPut = (postDate, id) => {
+    axios
+      .put(
+        `${process.env.REACT_APP_BASE_URL}/order/order-discount/${id}/`,
+        postDate
+      )
+      .then((resp) => {
+        // console.log(resp.data);
+        mainOrder.orderdiscount = resp.data;
+        toast.success(`Order discount saved sucessfully.`, {
+          autoClose: 3000,
+        });
+        setShowEditModal(false);
+      })
+      .catch((error) => {
+        console.log(error.response);
+        toast.error(`Something went wrong, plase try again later.`, {
+          autoClose: 3000,
+        });
+        setShowEditModal(false);
+      });
+  };
+
+  const handleOrderDiscount = () => {
+    if (orderDiscountNote === '' || orderDiscountNote === null) {
+      toast.error(`Please enter discount note.`, {
+        autoClose: 3000,
+      });
+    } else if (orderDiscountPrice === '' || orderDiscountPrice === null) {
+      toast.error(`Please enter discount price.`, {
+        autoClose: 3000,
+      });
+    } else if (orderDiscountBy === '' || orderDiscountBy === null) {
+      toast.error(`Please select discount by.`, {
+        autoClose: 3000,
+      });
+    } else {
+      const postOrderDiscount = {
+        order: orderId,
+        discount_note: orderDiscountNote,
+        discount_price: parseInt(orderDiscountPrice),
+        discount_by: parseInt(orderDiscountBy),
+      };
+      const putOrderDiscount = {
+        discount_note: orderDiscountNote,
+        discount_price: parseInt(orderDiscountPrice),
+        discount_by: parseInt(orderDiscountBy),
+      };
+      if (orderDiscount === null) {
+        ajaxOrderDiscountPost(postOrderDiscount);
+        // console.log(postOrderDiscount);
+      } else {
+        ajaxOrderDiscountPut(putOrderDiscount, orderDiscountId);
+        // console.log(putOrderDiscount);
+      }
+    }
+  };
+
   return (
     <>
       <tr>
@@ -504,17 +598,17 @@ const OrderTable = ({ order }) => {
         </td>
         <td className='pl-3'>
           <div className='mb-0 font-weight-bold'>
-            {order.orderdiscount ? (
+            {mainOrder.orderdiscount ? (
               <>
                 <p className='m-0'>
-                  &mdash; BDT {order.orderdiscount.discount_price} <br />
+                  &mdash; BDT {mainOrder.orderdiscount.discount_price} <br />
                 </p>
                 <p className='my-2'>
-                  Reasons: <br /> {order.orderdiscount.discount_note}
+                  Reasons: <br /> {mainOrder.orderdiscount.discount_note}
                 </p>
-                &mdash; Himika <br />
+                &mdash; {mainOrder.orderdiscount.discount_by.username} <br />
                 <button
-                  onClick={() => handleEditModal(order, 'orderdiscount')}
+                  onClick={() => handleEditModal(mainOrder, 'orderdiscount')}
                   className='edit-order'
                 >
                   Edit
@@ -522,7 +616,7 @@ const OrderTable = ({ order }) => {
               </>
             ) : (
               <button
-                onClick={() => handleEditModal(order, 'orderdiscount')}
+                onClick={() => handleEditModal(mainOrder, 'orderdiscount')}
                 className='edit-order'
               >
                 Add
@@ -822,33 +916,22 @@ const OrderTable = ({ order }) => {
                           type='number'
                           placeholder='discount price'
                           className='txt'
-                          value={
-                            order.orderdiscount &&
-                            order.orderdiscount.discount_price
-                              ? order.orderdiscount.discount_price
-                              : ''
+                          value={orderDiscountPrice || ''}
+                          onChange={(e) =>
+                            setOrderDiscountPrice(e.target.value)
                           }
                         />
                         <textarea
-                          name=''
                           placeholder='discount note'
-                          value={
-                            order.orderdiscount &&
-                            order.orderdiscount.discount_note
-                              ? order.orderdiscount.discount_note
-                              : ''
-                          }
+                          value={orderDiscountNote || ''}
+                          onChange={(e) => setOrderDiscountNote(e.target.value)}
                         ></textarea>
                         <p className='font-weight-bold my-1 ml-1'>By:</p>
                         <select
                           style={{ width: '100%' }}
                           className='single'
-                          value={
-                            order.orderdiscount &&
-                            order.orderdiscount.discount_by
-                              ? order.orderdiscount.discount_by.id
-                              : ''
-                          }
+                          value={orderDiscountBy || ''}
+                          onChange={(e) => setOrderDiscountBy(e.target.value)}
                         >
                           {users &&
                             users.map((user, i) => (
@@ -857,6 +940,13 @@ const OrderTable = ({ order }) => {
                               </option>
                             ))}
                         </select>
+                        <br />
+                        <button
+                          className='btn btn-primary btn-sm mt-2'
+                          onClick={handleOrderDiscount}
+                        >
+                          Save
+                        </button>
                       </td>
                     )}
                     {shownItemName === 'orderdelivery' && (
