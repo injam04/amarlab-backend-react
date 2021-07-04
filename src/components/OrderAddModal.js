@@ -286,6 +286,7 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
               toast.success('Order places successfully.', {
                 autoClose: 3000,
               });
+              window.location.reload();
             })
             .catch((error) => {
               console.log(error.response);

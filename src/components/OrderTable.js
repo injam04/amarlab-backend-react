@@ -5,6 +5,7 @@ import { Modal, ModalBody } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 
 const OrderTable = ({ order }) => {
+  const [mainOrder] = useState(order);
   const [showEditModal, setShowEditModal] = useState(false);
   const [users, setUsers] = useState(null);
 
@@ -20,7 +21,32 @@ const OrderTable = ({ order }) => {
 
   // order details
   const [orderStatus, setOrderStatus] = useState(
-    order.orderdetail && order.orderdetail.order_status
+    mainOrder.orderdetail && mainOrder.orderdetail.order_status
+  );
+  const [csAgent, setCsAgent] = useState(
+    mainOrder.orderdetail &&
+      mainOrder.orderdetail.cs_agent &&
+      mainOrder.orderdetail.cs_agent.id
+  );
+  const [mt, setMt] = useState(
+    mainOrder.orderdetail &&
+      mainOrder.orderdetail.mt &&
+      mainOrder.orderdetail.mt.id
+  );
+  const [orderType, setOrderType] = useState(
+    mainOrder.orderdetail && mainOrder.orderdetail.order_type
+  );
+  const [orderReference, setOrderReference] = useState(
+    mainOrder.orderdetail && mainOrder.orderdetail.references
+  );
+  const [orderPersona, setOrderPersona] = useState(
+    mainOrder.orderdetail && mainOrder.orderdetail.persona
+  );
+  const [orderPaymentStatus, setOrderPaymentStatus] = useState(
+    mainOrder.orderdetail && mainOrder.orderdetail.payment_status
+  );
+  const [orderNote, setOrderNote] = useState(
+    mainOrder.orderdetail && mainOrder.orderdetail.order_note
   );
 
   useEffect(() => {
@@ -54,6 +80,7 @@ const OrderTable = ({ order }) => {
       .post(`${process.env.REACT_APP_BASE_URL}/order/order-detail/`, postDate)
       .then((resp) => {
         // console.log(resp.data);
+        mainOrder.orderdetail = resp.data;
         toast.success(`Order status saved sucessfully.`, {
           autoClose: 3000,
         });
@@ -76,6 +103,7 @@ const OrderTable = ({ order }) => {
       )
       .then((resp) => {
         // console.log(resp.data);
+        mainOrder.orderdetail = resp.data;
         toast.success(`Order status saved sucessfully.`, {
           autoClose: 3000,
         });
@@ -93,7 +121,7 @@ const OrderTable = ({ order }) => {
   const handleOrderStatus = () => {
     // console.log(orderStatus);
     if (orderStatus === '' || orderStatus === null) {
-      toast.success(`Select Order Status.`, {
+      toast.error(`Select Order Status.`, {
         autoClose: 3000,
       });
     } else {
@@ -117,6 +145,151 @@ const OrderTable = ({ order }) => {
     }
   };
 
+  const handleOrderCs = () => {
+    const postOrderDetails = {
+      cs_agent: parseInt(csAgent),
+      order: orderId,
+    };
+    const putOrderDetails = {
+      cs_agent: parseInt(csAgent),
+    };
+    if (orderDetails === null) {
+      ajaxOrderDetailsPost(postOrderDetails);
+    } else {
+      ajaxOrderDetailsPut(putOrderDetails, orderDetailsId);
+    }
+  };
+
+  const handleOrderMt = () => {
+    const postOrderDetails = {
+      mt: parseInt(mt),
+      order: orderId,
+    };
+    const putOrderDetails = {
+      mt: parseInt(mt),
+    };
+    if (orderDetails === null) {
+      ajaxOrderDetailsPost(postOrderDetails);
+    } else {
+      ajaxOrderDetailsPut(putOrderDetails, orderDetailsId);
+    }
+  };
+
+  const handleOrderType = () => {
+    if (orderType === '' || orderType === null) {
+      toast.error(`Select Order type.`, {
+        autoClose: 3000,
+      });
+    } else {
+      const postOrderDetails = {
+        order_type: orderType,
+        order: orderId,
+      };
+      const putOrderDetails = {
+        order_type: orderType,
+      };
+      if (orderDetails === null) {
+        ajaxOrderDetailsPost(postOrderDetails);
+        // console.log(postOrderDetails);
+      } else {
+        ajaxOrderDetailsPut(putOrderDetails, orderDetailsId);
+        // console.log(putOrderDetails);
+      }
+    }
+  };
+
+  const handleOrderReference = () => {
+    if (orderReference === '' || orderReference === null) {
+      toast.error(`Please enter Order reference.`, {
+        autoClose: 3000,
+      });
+    } else {
+      const postOrderDetails = {
+        references: orderReference,
+        order: orderId,
+      };
+      const putOrderDetails = {
+        references: orderReference,
+      };
+      if (orderDetails === null) {
+        ajaxOrderDetailsPost(postOrderDetails);
+        // console.log(postOrderDetails);
+      } else {
+        ajaxOrderDetailsPut(putOrderDetails, orderDetailsId);
+        // console.log(putOrderDetails);
+      }
+    }
+  };
+
+  const handleOrderPersona = () => {
+    if (orderPersona === '' || orderPersona === null) {
+      toast.error(`Please select Order reference.`, {
+        autoClose: 3000,
+      });
+    } else {
+      const postOrderDetails = {
+        persona: orderPersona,
+        order: orderId,
+      };
+      const putOrderDetails = {
+        persona: orderPersona,
+      };
+      if (orderDetails === null) {
+        ajaxOrderDetailsPost(postOrderDetails);
+        // console.log(postOrderDetails);
+      } else {
+        ajaxOrderDetailsPut(putOrderDetails, orderDetailsId);
+        // console.log(putOrderDetails);
+      }
+    }
+  };
+
+  const handleOrderPayStatus = () => {
+    if (orderPaymentStatus === '' || orderPaymentStatus === null) {
+      toast.error(`Please select Order status.`, {
+        autoClose: 3000,
+      });
+    } else {
+      const postOrderDetails = {
+        payment_status: orderPaymentStatus,
+        order: orderId,
+      };
+      const putOrderDetails = {
+        payment_status: orderPaymentStatus,
+      };
+      if (orderDetails === null) {
+        ajaxOrderDetailsPost(postOrderDetails);
+        // console.log(postOrderDetails);
+      } else {
+        ajaxOrderDetailsPut(putOrderDetails, orderDetailsId);
+        // console.log(putOrderDetails);
+      }
+    }
+  };
+
+  const handleOrderNote = () => {
+    if (orderNote === '' || orderNote === null) {
+      toast.error(`Please select Order status.`, {
+        autoClose: 3000,
+      });
+    } else {
+      const postOrderDetails = {
+        order_note: orderNote,
+        order: orderId,
+      };
+      const putOrderDetails = {
+        order_note: orderNote,
+      };
+      if (orderDetails === null) {
+        ajaxOrderDetailsPost(postOrderDetails);
+        // console.log(postOrderDetails);
+      } else {
+        ajaxOrderDetailsPut(putOrderDetails, orderDetailsId);
+        // console.log(putOrderDetails);
+      }
+    }
+  };
+
   return (
     <>
       <tr>
@@ -135,11 +308,11 @@ const OrderTable = ({ order }) => {
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold text-capitalize'>
-            {order.orderdetail ? (
+            {mainOrder.orderdetail ? (
               <>
-                {order.orderdetail.order_status} <br />
+                {mainOrder.orderdetail.order_status} <br />
                 <button
-                  onClick={() => handleEditModal(order, 'order_status')}
+                  onClick={() => handleEditModal(mainOrder, 'order_status')}
                   className='edit-order'
                 >
                   Edit
@@ -147,7 +320,7 @@ const OrderTable = ({ order }) => {
               </>
             ) : (
               <button
-                onClick={() => handleEditModal(order, 'order_status')}
+                onClick={() => handleEditModal(mainOrder, 'order_status')}
                 className='edit-order'
               >
                 Add
@@ -157,11 +330,11 @@ const OrderTable = ({ order }) => {
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold'>
-            {order.orderdetail && order.orderdetail.cs_agent ? (
+            {mainOrder.orderdetail && mainOrder.orderdetail.cs_agent ? (
               <>
-                {order.orderdetail.cs_agent.first_name} <br />
+                {mainOrder.orderdetail.cs_agent.username} <br />
                 <button
-                  onClick={() => handleEditModal(order, 'cs_agent')}
+                  onClick={() => handleEditModal(mainOrder, 'cs_agent')}
                   className='edit-order'
                 >
                   Edit
@@ -169,7 +342,7 @@ const OrderTable = ({ order }) => {
               </>
             ) : (
               <button
-                onClick={() => handleEditModal(order, 'cs_agent')}
+                onClick={() => handleEditModal(mainOrder, 'cs_agent')}
                 className='edit-order'
               >
                 Add
@@ -179,11 +352,11 @@ const OrderTable = ({ order }) => {
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold'>
-            {order.orderdetail && order.orderdetail.mt ? (
+            {mainOrder.orderdetail && mainOrder.orderdetail.mt ? (
               <>
-                {order.orderdetail.mt.first_name} <br />
+                {mainOrder.orderdetail.mt.username} <br />
                 <button
-                  onClick={() => handleEditModal(order, 'mt')}
+                  onClick={() => handleEditModal(mainOrder, 'mt')}
                   className='edit-order'
                 >
                   Edit
@@ -191,7 +364,7 @@ const OrderTable = ({ order }) => {
               </>
             ) : (
               <button
-                onClick={() => handleEditModal(order, 'mt')}
+                onClick={() => handleEditModal(mainOrder, 'mt')}
                 className='edit-order'
               >
                 Add
@@ -201,11 +374,11 @@ const OrderTable = ({ order }) => {
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold text-capitalize'>
-            {order.orderdetail && order.orderdetail.order_type ? (
+            {mainOrder.orderdetail && mainOrder.orderdetail.order_type ? (
               <>
-                {order.orderdetail.order_type} <br />
+                {mainOrder.orderdetail.order_type} <br />
                 <button
-                  onClick={() => handleEditModal(order, 'order_type')}
+                  onClick={() => handleEditModal(mainOrder, 'order_type')}
                   className='edit-order'
                 >
                   Edit
@@ -213,7 +386,7 @@ const OrderTable = ({ order }) => {
               </>
             ) : (
               <button
-                onClick={() => handleEditModal(order, 'order_type')}
+                onClick={() => handleEditModal(mainOrder, 'order_type')}
                 className='edit-order'
               >
                 Add
@@ -223,11 +396,11 @@ const OrderTable = ({ order }) => {
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold text-capitalize'>
-            {order.orderdetail ? (
+            {mainOrder.orderdetail ? (
               <>
-                {order.orderdetail.references} <br />
+                {mainOrder.orderdetail.references} <br />
                 <button
-                  onClick={() => handleEditModal(order, 'references')}
+                  onClick={() => handleEditModal(mainOrder, 'references')}
                   className='edit-order'
                 >
                   Edit
@@ -235,7 +408,7 @@ const OrderTable = ({ order }) => {
               </>
             ) : (
               <button
-                onClick={() => handleEditModal(order, 'references')}
+                onClick={() => handleEditModal(mainOrder, 'references')}
                 className='edit-order'
               >
                 Add
@@ -245,11 +418,11 @@ const OrderTable = ({ order }) => {
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold text-capitalize'>
-            {order.orderdetail ? (
+            {mainOrder.orderdetail ? (
               <>
-                {order.orderdetail.persona} <br />
+                {mainOrder.orderdetail.persona} <br />
                 <button
-                  onClick={() => handleEditModal(order, 'persona')}
+                  onClick={() => handleEditModal(mainOrder, 'persona')}
                   className='edit-order'
                 >
                   Edit
@@ -257,7 +430,7 @@ const OrderTable = ({ order }) => {
               </>
             ) : (
               <button
-                onClick={() => handleEditModal(order, 'persona')}
+                onClick={() => handleEditModal(mainOrder, 'persona')}
                 className='edit-order'
               >
                 Add
@@ -362,11 +535,11 @@ const OrderTable = ({ order }) => {
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold text-capitalize'>
-            {order.orderdetail ? (
+            {mainOrder.orderdetail ? (
               <>
-                {order.orderdetail.payment_status} <br />
+                {mainOrder.orderdetail.payment_status} <br />
                 <button
-                  onClick={() => handleEditModal(order, 'payment_status')}
+                  onClick={() => handleEditModal(mainOrder, 'payment_status')}
                   className='edit-order'
                 >
                   Edit
@@ -374,7 +547,7 @@ const OrderTable = ({ order }) => {
               </>
             ) : (
               <button
-                onClick={() => handleEditModal(order, 'payment_status')}
+                onClick={() => handleEditModal(mainOrder, 'payment_status')}
                 className='edit-order'
               >
                 Add
@@ -384,11 +557,11 @@ const OrderTable = ({ order }) => {
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold pr-2'>
-            {order.orderdetail ? (
+            {mainOrder.orderdetail ? (
               <>
-                {order.orderdetail.order_note} <br />
+                {mainOrder.orderdetail.order_note} <br />
                 <button
-                  onClick={() => handleEditModal(order, 'order_note')}
+                  onClick={() => handleEditModal(mainOrder, 'order_note')}
                   className='edit-order'
                 >
                   Edit
@@ -396,7 +569,7 @@ const OrderTable = ({ order }) => {
               </>
             ) : (
               <button
-                onClick={() => handleEditModal(order, 'order_note')}
+                onClick={() => handleEditModal(mainOrder, 'order_note')}
                 className='edit-order'
               >
                 Add
@@ -490,11 +663,6 @@ const OrderTable = ({ order }) => {
                       <td className='pl-3'>
                         <select
                           className='single'
-                          // value={
-                          //   order.orderdetail && order.orderdetail.order_status
-                          //     ? order.orderdetail.order_status
-                          //     : ''
-                          // }
                           value={orderStatus || ''}
                           onChange={(e) => setOrderStatus(e.target.value)}
                         >
@@ -515,11 +683,8 @@ const OrderTable = ({ order }) => {
                       <td className='pl-3'>
                         <select
                           className='single'
-                          value={
-                            order.orderdetail && order.orderdetail.cs_agent
-                              ? order.orderdetail.cs_agent.id
-                              : ''
-                          }
+                          value={csAgent || ''}
+                          onChange={(e) => setCsAgent(e.target.value)}
                         >
                           {users &&
                             users.map((user, i) => (
@@ -528,17 +693,21 @@ const OrderTable = ({ order }) => {
                               </option>
                             ))}
                         </select>
+                        <br />
+                        <button
+                          className='btn btn-primary btn-sm mt-2'
+                          onClick={handleOrderCs}
+                        >
+                          Save
+                        </button>
                       </td>
                     )}
                     {shownItemName === 'mt' && (
                       <td className='pl-3'>
                         <select
                           className='single'
-                          value={
-                            order.orderdetail && order.orderdetail.mt
-                              ? order.orderdetail.mt.id
-                              : ''
-                          }
+                          value={mt || ''}
+                          onChange={(e) => setMt(e.target.value)}
                         >
                           {users &&
                             users.map((user, i) => (
@@ -547,73 +716,104 @@ const OrderTable = ({ order }) => {
                               </option>
                             ))}
                         </select>
+                        <br />
+                        <button
+                          className='btn btn-primary btn-sm mt-2'
+                          onClick={handleOrderMt}
+                        >
+                          Save
+                        </button>
                       </td>
                     )}
                     {shownItemName === 'order_type' && (
                       <td className='pl-3'>
                         <select
-                          value={
-                            order.orderdetail && order.orderdetail.order_type
-                              ? order.orderdetail.order_type
-                              : ''
-                          }
+                          value={orderType || ''}
                           className='single'
+                          onChange={(e) => setOrderType(e.target.value)}
                         >
+                          <option value=''>Select order type</option>
                           <option value='covid'>Covid</option>
                           <option value='non_covid'>Non Covid</option>
                         </select>
+                        <br />
+                        <button
+                          className='btn btn-primary btn-sm mt-2'
+                          onClick={handleOrderType}
+                        >
+                          Save
+                        </button>
                       </td>
                     )}
                     {shownItemName === 'references' && (
                       <td className='pl-3'>
                         <textarea
-                          value={
-                            order.orderdetail && order.orderdetail.references
-                              ? order.orderdetail.references
-                              : ''
-                          }
+                          value={orderReference || ''}
+                          onChange={(e) => setOrderReference(e.target.value)}
                         ></textarea>
+                        <br />
+                        <button
+                          className='btn btn-primary btn-sm mt-2'
+                          onClick={handleOrderReference}
+                        >
+                          Save
+                        </button>
                       </td>
                     )}
                     {shownItemName === 'persona' && (
                       <td className='pl-3'>
                         <select
-                          className='single'
-                          value={
-                            order.orderdetail && order.orderdetail.persona
-                              ? order.orderdetail.persona
-                              : ''
-                          }
+                          className='single form-control'
+                          value={orderPersona || ''}
+                          onChange={(e) => setOrderPersona(e.target.value)}
                         >
+                          <option value=''>Select order persona</option>
                           <option value='coronic'>Coronic</option>
                         </select>
+                        <br />
+                        <button
+                          className='btn btn-primary btn-sm mt-2'
+                          onClick={handleOrderPersona}
+                        >
+                          Save
+                        </button>
                       </td>
                     )}
                     {shownItemName === 'payment_status' && (
                       <td className='pl-3'>
                         <select
-                          value={
-                            order.orderdetail &&
-                            order.orderdetail.payment_status
-                              ? order.orderdetail.payment_status
-                              : ''
-                          }
+                          value={orderPaymentStatus || ''}
                           className='single'
+                          onChange={(e) =>
+                            setOrderPaymentStatus(e.target.value)
+                          }
                         >
+                          <option value=''>Select order payment status</option>
                           <option value='paid'>Paid</option>
                           <option value='unpaid'>Unpaid</option>
                         </select>
+                        <br />
+                        <button
+                          className='btn btn-primary btn-sm mt-2'
+                          onClick={handleOrderPayStatus}
+                        >
+                          Save
+                        </button>
                       </td>
                     )}
                     {shownItemName === 'order_note' && (
                       <td className='pl-3'>
                         <textarea
-                          value={
-                            order.orderdetail && order.orderdetail.order_note
-                              ? order.orderdetail.order_note
-                              : ''
-                          }
+                          value={orderNote}
+                          onChange={(e) => setOrderNote(e.target.value)}
                         ></textarea>
+                        <br />
+                        <button
+                          className='btn btn-primary btn-sm mt-2'
+                          onClick={handleOrderNote}
+                        >
+                          Save
+                        </button>
                       </td>
                     )}
                     {shownItemName === 'orderdiscount' && (

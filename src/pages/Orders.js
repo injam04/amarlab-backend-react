@@ -37,8 +37,18 @@ class Orders extends Component {
   };
 
   componentDidMount() {
-    this.fetchOrders();
-    this.fetchUsers();
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.props.history.push('/login');
+    } else {
+      axios.interceptors.request.use((config) => {
+        const tokehjjhhn = 'Token ' + JSON.parse(token);
+        config.headers.Authorization = tokehjjhhn;
+        return config;
+      });
+      this.fetchOrders();
+      this.fetchUsers();
+    }
   }
 
   loadMore = () => {
