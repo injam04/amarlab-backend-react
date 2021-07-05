@@ -592,7 +592,7 @@ button.edit-order {
   background-color: transparent;
 }
 
-.modal .edit-order tbody select.single {
+/* .modal .edit-order tbody select.single {
   width: 130px;
   border: none;
   outline: none;
@@ -600,16 +600,16 @@ button.edit-order {
   border-radius: 5px;
   padding: 5px;
   background-color: transparent;
-}
+} */
 
-.modal .edit-order tbody textarea {
+/* .modal .edit-order tbody textarea {
   border: none;
   outline: none;
   border: 1px solid #777;
   border-radius: 5px;
   padding: 5px;
   height: 75px;
-}
+} */
 
 /* .modal .edit-order tbody input[type='text'] { */
 .modal .edit-order tbody input.txt {

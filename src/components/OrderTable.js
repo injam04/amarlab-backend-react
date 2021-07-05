@@ -74,6 +74,7 @@ const OrderTable = ({ order }) => {
   const [userPatients, setUserPatients] = useState(null);
   const [orderEditId, setOrderEditId] = useState(null);
   const [addressId, setAddressId] = useState(null);
+  const [orderUserId, setOrderUserId] = useState(null);
 
   useEffect(() => {
     axios
@@ -197,32 +198,44 @@ const OrderTable = ({ order }) => {
   };
 
   const handleOrderCs = () => {
-    const postOrderDetails = {
-      cs_agent: parseInt(csAgent),
-      order: orderId,
-    };
-    const putOrderDetails = {
-      cs_agent: parseInt(csAgent),
-    };
-    if (orderDetails === null) {
-      ajaxOrderDetailsPost(postOrderDetails);
+    if (csAgent === '' || csAgent === null) {
+      toast.error(`Select cs agent.`, {
+        autoClose: 3000,
+      });
     } else {
-      ajaxOrderDetailsPut(putOrderDetails, orderDetailsId);
+      const postOrderDetails = {
+        cs_agent: parseInt(csAgent),
+        order: orderId,
+      };
+      const putOrderDetails = {
+        cs_agent: parseInt(csAgent),
+      };
+      if (orderDetails === null) {
+        ajaxOrderDetailsPost(postOrderDetails);
+      } else {
+        ajaxOrderDetailsPut(putOrderDetails, orderDetailsId);
+      }
     }
   };
 
   const handleOrderMt = () => {
-    const postOrderDetails = {
-      mt: parseInt(mt),
-      order: orderId,
-    };
-    const putOrderDetails = {
-      mt: parseInt(mt),
-    };
-    if (orderDetails === null) {
-      ajaxOrderDetailsPost(postOrderDetails);
+    if (mt === '' || mt === null) {
+      toast.error(`Select medical technologist.`, {
+        autoClose: 3000,
+      });
     } else {
-      ajaxOrderDetailsPut(putOrderDetails, orderDetailsId);
+      const postOrderDetails = {
+        mt: parseInt(mt),
+        order: orderId,
+      };
+      const putOrderDetails = {
+        mt: parseInt(mt),
+      };
+      if (orderDetails === null) {
+        ajaxOrderDetailsPost(postOrderDetails);
+      } else {
+        ajaxOrderDetailsPut(putOrderDetails, orderDetailsId);
+      }
     }
   };
 
@@ -485,6 +498,7 @@ const OrderTable = ({ order }) => {
         : null
     );
     setOrderEditId(order.id);
+    setOrderUserId(order.user.id);
 
     axios
       .get(
@@ -896,7 +910,7 @@ const OrderTable = ({ order }) => {
                     {shownItemName === 'order_status' && (
                       <td className='pl-3'>
                         <select
-                          className='single'
+                          className='single form-control form-control-lg'
                           value={orderStatus || ''}
                           onChange={(e) => setOrderStatus(e.target.value)}
                         >
@@ -906,7 +920,7 @@ const OrderTable = ({ order }) => {
                         </select>{' '}
                         <br />
                         <button
-                          className='btn btn-primary btn-sm mt-2'
+                          className='btn btn-primary'
                           onClick={handleOrderStatus}
                         >
                           Save
@@ -916,10 +930,11 @@ const OrderTable = ({ order }) => {
                     {shownItemName === 'cs_agent' && (
                       <td className='pl-3'>
                         <select
-                          className='single'
+                          className='single form-control form-control-lg'
                           value={csAgent || ''}
                           onChange={(e) => setCsAgent(e.target.value)}
                         >
+                          <option value=''>Select cs agent</option>
                           {orderManager &&
                             orderManager.map((user, i) => (
                               <option value={user.id} key={i}>
@@ -929,7 +944,7 @@ const OrderTable = ({ order }) => {
                         </select>
                         <br />
                         <button
-                          className='btn btn-primary btn-sm mt-2'
+                          className='btn btn-primary'
                           onClick={handleOrderCs}
                         >
                           Save
@@ -939,10 +954,11 @@ const OrderTable = ({ order }) => {
                     {shownItemName === 'mt' && (
                       <td className='pl-3'>
                         <select
-                          className='single'
+                          className='single form-control form-control-lg'
                           value={mt || ''}
                           onChange={(e) => setMt(e.target.value)}
                         >
+                          <option value=''>Select medical technologist</option>
                           {users &&
                             users.map((user, i) => (
                               <option value={user.id} key={i}>
@@ -952,7 +968,7 @@ const OrderTable = ({ order }) => {
                         </select>
                         <br />
                         <button
-                          className='btn btn-primary btn-sm mt-2'
+                          className='btn btn-primary'
                           onClick={handleOrderMt}
                         >
                           Save
@@ -963,7 +979,7 @@ const OrderTable = ({ order }) => {
                       <td className='pl-3'>
                         <select
                           value={orderType || ''}
-                          className='single'
+                          className='single form-control form-control-lg'
                           onChange={(e) => setOrderType(e.target.value)}
                         >
                           <option value=''>Select order type</option>
@@ -972,7 +988,7 @@ const OrderTable = ({ order }) => {
                         </select>
                         <br />
                         <button
-                          className='btn btn-primary btn-sm mt-2'
+                          className='btn btn-primary'
                           onClick={handleOrderType}
                         >
                           Save
@@ -982,6 +998,7 @@ const OrderTable = ({ order }) => {
                     {shownItemName === 'references' && (
                       <td className='pl-3'>
                         <textarea
+                          className='form-control'
                           value={orderReference || ''}
                           onChange={(e) => setOrderReference(e.target.value)}
                         ></textarea>
@@ -997,7 +1014,7 @@ const OrderTable = ({ order }) => {
                     {shownItemName === 'persona' && (
                       <td className='pl-3'>
                         <select
-                          className='single form-control'
+                          className='single form-control form-control-lg'
                           value={orderPersona || ''}
                           onChange={(e) => setOrderPersona(e.target.value)}
                         >
@@ -1006,7 +1023,7 @@ const OrderTable = ({ order }) => {
                         </select>
                         <br />
                         <button
-                          className='btn btn-primary btn-sm mt-2'
+                          className='btn btn-primary'
                           onClick={handleOrderPersona}
                         >
                           Save
@@ -1017,7 +1034,7 @@ const OrderTable = ({ order }) => {
                       <td className='pl-3'>
                         <select
                           value={orderPaymentStatus || ''}
-                          className='single'
+                          className='single form-control form-control-lg'
                           onChange={(e) =>
                             setOrderPaymentStatus(e.target.value)
                           }
@@ -1028,7 +1045,7 @@ const OrderTable = ({ order }) => {
                         </select>
                         <br />
                         <button
-                          className='btn btn-primary btn-sm mt-2'
+                          className='btn btn-primary'
                           onClick={handleOrderPayStatus}
                         >
                           Save
@@ -1038,12 +1055,13 @@ const OrderTable = ({ order }) => {
                     {shownItemName === 'order_note' && (
                       <td className='pl-3'>
                         <textarea
+                          className='form-control form-control-lg'
                           value={orderNote}
                           onChange={(e) => setOrderNote(e.target.value)}
                         ></textarea>
                         <br />
                         <button
-                          className='btn btn-primary btn-sm mt-2'
+                          className='btn btn-primary'
                           onClick={handleOrderNote}
                         >
                           Save
@@ -1055,21 +1073,21 @@ const OrderTable = ({ order }) => {
                         <input
                           type='number'
                           placeholder='discount price'
-                          className='txt'
+                          className='mb-2 form-control form-control-lg'
                           value={orderDiscountPrice || ''}
                           onChange={(e) =>
                             setOrderDiscountPrice(e.target.value)
                           }
                         />
                         <textarea
+                          className='form-control form-control-lg'
                           placeholder='discount note'
                           value={orderDiscountNote || ''}
                           onChange={(e) => setOrderDiscountNote(e.target.value)}
                         ></textarea>
-                        <p className='font-weight-bold my-1 ml-1'>By:</p>
+                        <p className='font-weight-bold my-1 mt-2 ml-1'>By:</p>
                         <select
-                          style={{ width: '100%' }}
-                          className='single'
+                          className='single form-control form-control-lg'
                           value={orderDiscountBy || ''}
                           onChange={(e) => setOrderDiscountBy(e.target.value)}
                         >
@@ -1082,7 +1100,7 @@ const OrderTable = ({ order }) => {
                         </select>
                         <br />
                         <button
-                          className='btn btn-primary btn-sm mt-2'
+                          className='btn btn-primary'
                           onClick={handleOrderDiscount}
                         >
                           Save
@@ -1092,7 +1110,7 @@ const OrderTable = ({ order }) => {
                     {shownItemName === 'orderdelivery' && (
                       <td className='pl-3'>
                         <select
-                          className='single'
+                          className='single form-control form-control-lg'
                           onChange={(e) => setReportDelivery(e.target.value)}
                         >
                           <option value=''>Select delivery status</option>
@@ -1109,7 +1127,7 @@ const OrderTable = ({ order }) => {
                         </select>
                         <br />
                         <button
-                          className='btn btn-primary btn-sm mt-2'
+                          className='btn btn-primary'
                           onClick={handleReportDelivery}
                         >
                           Save
@@ -1133,6 +1151,7 @@ const OrderTable = ({ order }) => {
         addressId={addressId}
         orderEditId={orderEditId}
         testItemModalClose={testItemModalClose}
+        orderUserId={orderUserId}
       />
     </>
   );

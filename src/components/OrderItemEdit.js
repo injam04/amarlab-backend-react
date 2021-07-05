@@ -15,6 +15,7 @@ const OrderItemEdit = ({
   addressId,
   orderEditId,
   testItemModalClose,
+  orderUserId,
 }) => {
   const [testType, setTestType] = useState('diagnostic');
   const [allLabs, setAllLabs] = useState([]);
@@ -65,7 +66,7 @@ const OrderItemEdit = ({
         full_name: patientName,
         dob: moment(patientDob).format('YYYY-MM-DD'),
         sex: patientGender,
-        user: userDetails.id,
+        user: orderUserId,
       };
       // console.log(postPatient);
 
