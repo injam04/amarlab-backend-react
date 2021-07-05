@@ -115,7 +115,7 @@ const OrderTable = ({ order }) => {
 
   const handleEditModal = (order, name) => {
     setShowEditModal(true);
-    console.log(order);
+    // console.log(order);
     setOrderId(order.id);
     setOrderDetailsId(order.orderdetail ? order.orderdetail.id : null);
     setOrderDiscountId(order.orderdiscount ? order.orderdiscount.id : null);
@@ -483,7 +483,8 @@ const OrderTable = ({ order }) => {
       .delete(`${process.env.REACT_APP_BASE_URL}/order/order-item/${item.id}/`)
       .then((resp) => {
         // console.log(resp.data);
-        getSingleOrderTree(orderId);
+        // getSingleOrderTree(orderId);
+        orderItemGet(orderId);
       })
       .catch((error) => {
         console.log(error.response);
@@ -512,9 +513,43 @@ const OrderTable = ({ order }) => {
       });
   };
 
+  const orderItemGet = (orderEditId) => {
+    axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/order/order-item-get/?order=${orderEditId}`
+      )
+      .then((resp) => {
+        const items = resp.data.results;
+        // console.log(items);
+        const totalPrice = items.reduce((total, item) => {
+          return total + parseInt(item.purchasable_order_item.sell_price);
+        }, 0);
+        // console.log(totalPrice);
+
+        axios
+          .put(
+            `${process.env.REACT_APP_BASE_URL}/order/order-only/${orderEditId}/`,
+            {
+              total_price: totalPrice,
+            }
+          )
+          .then((resp) => {
+            // console.log(resp.data);
+            getSingleOrderTree(orderEditId);
+            setItemEditModal(false);
+          })
+          .catch((error) => {
+            console.log(error.response);
+          });
+      });
+  };
+
   const testItemModalClose = () => {
-    getSingleOrderTree(orderEditId);
-    setItemEditModal(false);
+    // getSingleOrderTree(orderEditId);
+    // setItemEditModal(false);
+    setTimeout(() => {
+      orderItemGet(orderEditId);
+    }, 1000);
   };
 
   return (
@@ -534,10 +569,18 @@ const OrderTable = ({ order }) => {
           </p>
         </td>
         <td className='pl-3'>
-          <p className='mb-0 font-weight-bold text-capitalize'>
+          <p className='mb-0 font-weight-bolder text-capitalize'>
             {mainOrder.orderdetail ? (
               <>
-                {mainOrder.orderdetail.order_status} <br />
+                <span
+                  className={`${
+                    mainOrder.orderdetail.order_status === 'processing'
+                      ? 'text-warning'
+                      : 'text-green'
+                  }`}
+                >
+                  {mainOrder.orderdetail.order_status} <br />
+                </span>
                 <button
                   onClick={() => handleEditModal(mainOrder, 'order_status')}
                   className='edit-order'

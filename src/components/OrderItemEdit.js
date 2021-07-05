@@ -21,7 +21,6 @@ const OrderItemEdit = ({
   const [allLabs, setAllLabs] = useState([]);
   const [labDetails, setLabDetails] = useState(null);
   const [orderPatients, setOrderPatients] = useState([]);
-  const [userDetails, setUserDetails] = useState(null);
 
   //patient add
   const [showPatAddForm, setShowPatAddForm] = useState(false);
@@ -103,14 +102,23 @@ const OrderItemEdit = ({
       };
     });
 
-    orderItem.forEach((item) => {
-      // console.log(item);
+    orderItem.forEach((item, i) => {
+      // console.log(orderItem.length, i);
+
       axios
         .post(`${process.env.REACT_APP_BASE_URL}/order/order-item/`, item)
-        .then((resp) => console.log(resp.data))
+        .then((resp) => {
+          // console.log(resp.data);
+          if (orderItem.length === i + 1) {
+            testItemModalClose();
+            setTimeout(() => {
+              setOrderPatients([]);
+              setLabDetails(null);
+            }, 1000);
+          }
+        })
         .catch((error) => console.log(error.response));
     });
-    testItemModalClose();
   };
 
   return (

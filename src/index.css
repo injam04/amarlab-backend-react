@@ -4,6 +4,10 @@ body {
   font-family: 'Poppins', sans-serif;
 }
 
+.text-green {
+  color: #39bc0c;
+}
+
 .dropdown-menu {
   width: auto;
 }
