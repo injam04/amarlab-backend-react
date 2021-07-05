@@ -419,7 +419,14 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                             {userDetails.username}{' '}
                             <i
                               className='fas fa-times ml-1 text-danger pointer'
-                              onClick={handleUserDetails}
+                              onClick={() => {
+                                if (
+                                  window.confirm(
+                                    'Are you sure to remove this user?'
+                                  )
+                                )
+                                  handleUserDetails();
+                              }}
                             ></i>
                           </p>
                         ) : (
@@ -496,7 +503,14 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                                     : `${order.test_item.diagnostic_test.name}`}{' '}
                                   <i
                                     className='fas fa-times ml-1 text-danger pointer'
-                                    onClick={() => handleDeleteOrder(order)}
+                                    onClick={() => {
+                                      if (
+                                        window.confirm(
+                                          'Are you sure to delete this item?'
+                                        )
+                                      )
+                                        handleDeleteOrder(order);
+                                    }}
                                   ></i>
                                   <br />
                                   <span className='text-dark-50'>
@@ -519,6 +533,10 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                             className='pointer bg-primary text-white px-3 py-1 rounded'
                             onClick={() => setShowTestModal(true)}
                           >
+                            <i
+                              className='fas fa-plus text-white'
+                              style={{ fontSize: '12px' }}
+                            ></i>{' '}
                             Test Add
                           </span>
                         </div>

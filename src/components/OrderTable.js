@@ -542,14 +542,16 @@ const OrderTable = ({ order }) => {
                   onClick={() => handleEditModal(mainOrder, 'order_status')}
                   className='edit-order'
                 >
+                  <i className='far fa-edit'></i>
                   Edit
                 </button>
               </>
             ) : (
               <button
                 onClick={() => handleEditModal(mainOrder, 'order_status')}
-                className='edit-order'
+                className='add-order'
               >
+                <i className='fas fa-plus'></i>
                 Add
               </button>
             )}
@@ -564,14 +566,16 @@ const OrderTable = ({ order }) => {
                   onClick={() => handleEditModal(mainOrder, 'cs_agent')}
                   className='edit-order'
                 >
+                  <i className='far fa-edit'></i>
                   Edit
                 </button>
               </>
             ) : (
               <button
                 onClick={() => handleEditModal(mainOrder, 'cs_agent')}
-                className='edit-order'
+                className='add-order'
               >
+                <i className='fas fa-plus'></i>
                 Add
               </button>
             )}
@@ -586,14 +590,16 @@ const OrderTable = ({ order }) => {
                   onClick={() => handleEditModal(mainOrder, 'mt')}
                   className='edit-order'
                 >
+                  <i className='far fa-edit'></i>
                   Edit
                 </button>
               </>
             ) : (
               <button
                 onClick={() => handleEditModal(mainOrder, 'mt')}
-                className='edit-order'
+                className='add-order'
               >
+                <i className='fas fa-plus'></i>
                 Add
               </button>
             )}
@@ -608,14 +614,16 @@ const OrderTable = ({ order }) => {
                   onClick={() => handleEditModal(mainOrder, 'order_type')}
                   className='edit-order'
                 >
+                  <i className='far fa-edit'></i>
                   Edit
                 </button>
               </>
             ) : (
               <button
                 onClick={() => handleEditModal(mainOrder, 'order_type')}
-                className='edit-order'
+                className='add-order'
               >
+                <i className='fas fa-plus'></i>
                 Add
               </button>
             )}
@@ -623,21 +631,23 @@ const OrderTable = ({ order }) => {
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold text-capitalize'>
-            {mainOrder.orderdetail ? (
+            {mainOrder.orderdetail && mainOrder.orderdetail.references ? (
               <>
                 {mainOrder.orderdetail.references} <br />
                 <button
                   onClick={() => handleEditModal(mainOrder, 'references')}
                   className='edit-order'
                 >
+                  <i className='far fa-edit'></i>
                   Edit
                 </button>
               </>
             ) : (
               <button
                 onClick={() => handleEditModal(mainOrder, 'references')}
-                className='edit-order'
+                className='add-order'
               >
+                <i className='fas fa-plus'></i>
                 Add
               </button>
             )}
@@ -645,21 +655,23 @@ const OrderTable = ({ order }) => {
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold text-capitalize'>
-            {mainOrder.orderdetail ? (
+            {mainOrder.orderdetail && mainOrder.orderdetail.persona ? (
               <>
                 {mainOrder.orderdetail.persona} <br />
                 <button
                   onClick={() => handleEditModal(mainOrder, 'persona')}
                   className='edit-order'
                 >
+                  <i className='far fa-edit'></i>
                   Edit
                 </button>
               </>
             ) : (
               <button
                 onClick={() => handleEditModal(mainOrder, 'persona')}
-                className='edit-order'
+                className='add-order'
               >
+                <i className='fas fa-plus'></i>
                 Add
               </button>
             )}
@@ -706,7 +718,13 @@ const OrderTable = ({ order }) => {
                           .diagnostic_test.name
                       }{' '}
                       <i
-                        onClick={() => handleOrItDlt(item)}
+                        // onClick={() => handleOrItDlt(item)}
+                        onClick={() => {
+                          if (
+                            window.confirm('Are you sure to delete this item?')
+                          )
+                            handleOrItDlt(item);
+                        }}
                         className='fas fa-times text-danger pointer ml-2'
                       ></i>
                     </span>
@@ -723,21 +741,13 @@ const OrderTable = ({ order }) => {
                   </div>
                 </div>
               ))}
-            {/* <div className='items mt-3'>
-              &mdash; Service Fee: <br />{' '}
-              <span className='text-dark-50'>৳ BDT 960</span> <br />
-            </div> */}
             <div className='items mt-3'>
               <button
-                className='btn edit-order py-1 btn-primary'
+                className='add-order'
                 onClick={() => handleTestItemModal(mainOrder)}
               >
-                Test Add
+                <i className='fas fa-plus'></i>Test Add
               </button>
-              {/* <br />*{' '}
-              <a href='?#' className='text-dark'>
-                Test Remove
-              </a> */}
             </div>
           </div>
         </td>
@@ -765,21 +775,31 @@ const OrderTable = ({ order }) => {
                   onClick={() => handleEditModal(mainOrder, 'orderdiscount')}
                   className='edit-order'
                 >
+                  <i className='far fa-edit'></i>
                   Edit
                 </button>
               </>
             ) : (
               <button
                 onClick={() => handleEditModal(mainOrder, 'orderdiscount')}
-                className='edit-order'
+                className='add-order'
               >
+                <i className='fas fa-plus'></i>
                 Add
               </button>
             )}
           </div>
         </td>
         <td className='pl-3'>
-          <p className='mb-0 font-weight-bold'>BDT {order.total_price}</p>
+          <p className='mb-0 font-weight-bold'>
+            BDT{' '}
+            {mainOrder.orderdiscount
+              ? `${
+                  parseInt(mainOrder.total_price) -
+                  parseInt(mainOrder.orderdiscount.discount_price)
+                }.00`
+              : mainOrder.total_price}
+          </p>
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold text-capitalize'>
@@ -790,14 +810,16 @@ const OrderTable = ({ order }) => {
                   onClick={() => handleEditModal(mainOrder, 'payment_status')}
                   className='edit-order'
                 >
+                  <i className='far fa-edit'></i>
                   Edit
                 </button>
               </>
             ) : (
               <button
                 onClick={() => handleEditModal(mainOrder, 'payment_status')}
-                className='edit-order'
+                className='add-order'
               >
+                <i className='fas fa-plus'></i>
                 Add
               </button>
             )}
@@ -805,21 +827,23 @@ const OrderTable = ({ order }) => {
         </td>
         <td className='pl-3'>
           <p className='mb-0 font-weight-bold pr-2'>
-            {mainOrder.orderdetail ? (
+            {mainOrder.orderdetail && mainOrder.orderdetail.order_note ? (
               <>
                 {mainOrder.orderdetail.order_note} <br />
                 <button
                   onClick={() => handleEditModal(mainOrder, 'order_note')}
                   className='edit-order'
                 >
+                  <i className='far fa-edit'></i>
                   Edit
                 </button>
               </>
             ) : (
               <button
                 onClick={() => handleEditModal(mainOrder, 'order_note')}
-                className='edit-order'
+                className='add-order'
               >
+                <i className='fas fa-plus'></i>
                 Add
               </button>
             )}
@@ -838,14 +862,16 @@ const OrderTable = ({ order }) => {
                 onClick={() => handleEditModal(mainOrder, 'orderdelivery')}
                 className='edit-order'
               >
+                <i className='far fa-edit'></i>
                 Edit
               </button>
             </>
           ) : (
             <button
               onClick={() => handleEditModal(mainOrder, 'orderdelivery')}
-              className='edit-order'
+              className='add-order'
             >
+              <i className='fas fa-plus'></i>
               Add
             </button>
           )}
@@ -1091,6 +1117,7 @@ const OrderTable = ({ order }) => {
                           value={orderDiscountBy || ''}
                           onChange={(e) => setOrderDiscountBy(e.target.value)}
                         >
+                          <option value=''>Select discount by</option>
                           {orderManager &&
                             orderManager.map((user, i) => (
                               <option value={user.id} key={i}>
