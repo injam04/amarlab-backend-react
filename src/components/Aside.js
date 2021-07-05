@@ -1,9 +1,21 @@
+import { useState } from 'react';
+import { useEffect } from 'react';
 import { useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const Aside = ({ asideOpen, setAsideClose }) => {
   const { is_superuser } = useContext(AuthContext);
+  const [isHomeActive, setIsHomeActive] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === '/') {
+      setIsHomeActive(true);
+    } else {
+      setIsHomeActive(false);
+    }
+  }, [location]);
 
   return (
     <div
@@ -29,7 +41,7 @@ const Aside = ({ asideOpen, setAsideClose }) => {
                     <li className='menu-item'>
                       <Link
                         to='/'
-                        className='menu-link'
+                        className={`${isHomeActive ? 'active' : ''} menu-link`}
                         onClick={() => setAsideClose()}
                       >
                         <span className='svg-icon menu-icon'>
@@ -39,7 +51,7 @@ const Aside = ({ asideOpen, setAsideClose }) => {
                       </Link>
                     </li>
                     <li className='menu-item'>
-                      <Link
+                      <NavLink
                         to='/orders'
                         className='menu-link'
                         onClick={() => setAsideClose()}
@@ -48,11 +60,11 @@ const Aside = ({ asideOpen, setAsideClose }) => {
                           <i className='fas fa-list'></i>
                         </span>
                         <span className='menu-text'>Orders</span>
-                      </Link>
+                      </NavLink>
                     </li>
                     {is_superuser && (
                       <li className='menu-item'>
-                        <Link
+                        <NavLink
                           to='/users'
                           className='menu-link'
                           onClick={() => setAsideClose()}
@@ -61,7 +73,7 @@ const Aside = ({ asideOpen, setAsideClose }) => {
                             <i className='fas fa-users' />
                           </span>
                           <span className='menu-text'>Users</span>
-                        </Link>
+                        </NavLink>
                       </li>
                     )}
 

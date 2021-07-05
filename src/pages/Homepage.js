@@ -1,6 +1,9 @@
 import axios from 'axios';
 import moment from 'moment';
 import React, { Component } from 'react';
+import RevenueSvg from '../assets/img/revenue.svg';
+import UserSvg from '../assets/img/user.svg';
+import OrderSvg from '../assets/img/ordsvg.svg';
 
 class Homepage extends Component {
   state = {
@@ -69,26 +72,40 @@ class Homepage extends Component {
             <div className='card-body'>
               <div className='row all'>
                 <div className='col-md-4'>
-                  <div className='single bg-light-danger'>
-                    <span className='svg-icon svg-icon-3x svg-icon-danger d-block my-2'></span>
-                    <h1 className='text-danger'>Total Orders</h1>
-                    <p className='text-danger'>
+                  <div className='col bg-light-danger p-8 rounded-xl'>
+                    <span className='svg-icon svg-icon-3x svg-icon-danger d-block my-2'>
+                      <img src={OrderSvg} alt='' />
+                    </span>
+                    <p className='text-danger font-weight-bold font-size-h3 mb-1'>
+                      Total Orders
+                    </p>
+                    <p className='text-danger font-weight-bold font-size-h6'>
                       {totalOrder ? `${this.addZero(totalOrder)}` : '00'}
                     </p>
                   </div>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single bg-light-success'>
-                    <h1 className='text-success'>Total Patients</h1>
-                    <p className='text-success'>
+                  <div className='col bg-light-success p-8 rounded-xl'>
+                    <span className='svg-icon svg-icon-3x svg-icon-success d-block my-2'>
+                      <img src={UserSvg} alt='' />
+                    </span>
+                    <p className='text-success font-weight-bold font-size-h3 mb-1'>
+                      Total Patients
+                    </p>
+                    <p className='text-success font-weight-bold font-size-h6'>
                       {totalPatient ? `${this.addZero(totalPatient)}` : '00'}
                     </p>
                   </div>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single bg-light-warning'>
-                    <h1 className='text-warning'>Total Revenue (GMV)</h1>
-                    <p className='text-warning'>
+                  <div className='col bg-light-warning p-8 rounded-xl'>
+                    <span className='svg-icon svg-icon-3x svg-icon-warning d-block my-2'>
+                      <img src={RevenueSvg} alt='' />
+                    </span>
+                    <p className='text-warning font-weight-bold font-size-h3 mb-1'>
+                      Total Revenue (GMV)
+                    </p>
+                    <p className='text-warning font-weight-bold font-size-h6'>
                       {totalRevenue ? `${totalRevenue}.00` : '00.00'}
                     </p>
                   </div>
@@ -96,32 +113,53 @@ class Homepage extends Component {
               </div>
               <div className='row today mt-13'>
                 <div className='col-md-12 mb-3'>
-                  <p className='text-center button'>
+                  {/* <p className='text-center button'>
                     <button className='btn btn-light'>
                       Todays {`(${moment(new Date()).format('DD MMM YYYY')})`}
                     </button>
+                  </p> */}
+                  <p className='text-center button'>
+                    <span className='card-label font-weight-bold  font-size-h3'>
+                      ————— Todays{' '}
+                      {`(${moment(new Date()).format('DD MMM YYYY')})`} —————
+                    </span>
                   </p>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single bg-light-danger'>
-                    <h1 className='text-danger'>Orders</h1>
-                    <p className='text-danger'>
+                  <div className='col bg-light-danger p-8 rounded-xl'>
+                    <span className='svg-icon svg-icon-3x svg-icon-danger d-block my-2'>
+                      <img src={OrderSvg} alt='' />
+                    </span>
+                    <p className='text-danger font-weight-bold font-size-h3 mb-1'>
+                      Orders
+                    </p>
+                    <p className='text-danger font-weight-bold font-size-h6'>
                       {totalOrder ? `${this.addZero(totalOrder)}` : '00'}
                     </p>
                   </div>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single bg-light-success'>
-                    <h1 className='text-success'>Patients</h1>
-                    <p className='text-success'>
+                  <div className='col bg-light-success p-8 rounded-xl'>
+                    <span className='svg-icon svg-icon-3x svg-icon-success d-block my-2'>
+                      <img src={UserSvg} alt='' />
+                    </span>
+                    <p className='text-success font-weight-bold font-size-h3 mb-1'>
+                      Patients
+                    </p>
+                    <p className='text-success font-weight-bold font-size-h6'>
                       {totalPatient ? `${this.addZero(totalPatient)}` : '00'}
                     </p>
                   </div>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single bg-light-warning'>
-                    <h1 className='text-warning'>Revenue (GMV)</h1>
-                    <p className='text-warning'>
+                  <div className='col bg-light-warning p-8 rounded-xl'>
+                    <span className='svg-icon svg-icon-3x svg-icon-warning d-block my-2'>
+                      <img src={RevenueSvg} alt='' />
+                    </span>
+                    <p className='text-warning font-weight-bold font-size-h3 mb-1'>
+                      Revenue (GMV)
+                    </p>
+                    <p className='text-warning font-weight-bold font-size-h6'>
                       {totalRevenue ? `${totalRevenue}.00` : '00.00'}
                     </p>
                   </div>
@@ -129,30 +167,50 @@ class Homepage extends Component {
               </div>
               <div className='row today mt-13'>
                 <div className='col-md-12 mb-3'>
-                  <p className='text-center button'>
+                  {/* <p className='text-center button'>
                     <button className='btn btn-light'>Weekly</button>
+                  </p> */}
+                  <p className='text-center button'>
+                    <span className='card-label font-weight-bold  font-size-h3'>
+                      ————————— Weekly —————————
+                    </span>
                   </p>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single bg-light-danger'>
-                    <h1 className='text-danger'>Orders</h1>
-                    <p className='text-danger'>
+                  <div className='col bg-light-danger p-8 rounded-xl'>
+                    <span className='svg-icon svg-icon-3x svg-icon-danger d-block my-2'>
+                      <img src={OrderSvg} alt='' />
+                    </span>
+                    <p className='text-danger font-weight-bold font-size-h3 mb-1'>
+                      Orders
+                    </p>
+                    <p className='text-danger font-weight-bold font-size-h6'>
                       {totalOrder ? `${this.addZero(totalOrder)}` : '00'}
                     </p>
                   </div>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single bg-light-success'>
-                    <h1 className='text-success'>Patients</h1>
-                    <p className='text-success'>
+                  <div className='col bg-light-success p-8 rounded-xl'>
+                    <span className='svg-icon svg-icon-3x svg-icon-success d-block my-2'>
+                      <img src={UserSvg} alt='' />
+                    </span>
+                    <p className='text-success font-weight-bold font-size-h3 mb-1'>
+                      Patients
+                    </p>
+                    <p className='text-success font-weight-bold font-size-h6'>
                       {totalPatient ? `${this.addZero(totalPatient)}` : '00'}
                     </p>
                   </div>
                 </div>
                 <div className='col-md-4'>
-                  <div className='single bg-light-warning'>
-                    <h1 className='text-warning'>Revenue (GMV)</h1>
-                    <p className='text-warning'>
+                  <div className='col bg-light-warning p-8 rounded-xl'>
+                    <span className='svg-icon svg-icon-3x svg-icon-warning d-block my-2'>
+                      <img src={RevenueSvg} alt='' />
+                    </span>
+                    <p className='text-warning font-weight-bold font-size-h3 mb-1'>
+                      Revenue (GMV)
+                    </p>
+                    <p className='text-warning font-weight-bold font-size-h6'>
                       {totalRevenue ? `${totalRevenue}.00` : '00.00'}
                     </p>
                   </div>

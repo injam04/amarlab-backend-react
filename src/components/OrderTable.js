@@ -4,6 +4,7 @@ import moment from 'moment';
 import { useState, useEffect } from 'react';
 import { Modal, ModalBody } from 'react-bootstrap';
 import { toast } from 'react-toastify';
+import OrderItemEdit from './OrderItemEdit';
 
 const OrderTable = ({ order }) => {
   const [mainOrder, setMainOrder] = useState(order);
@@ -67,6 +68,12 @@ const OrderTable = ({ order }) => {
 
   // order delivery
   const [reportDelivery, setReportDelivery] = useState('');
+
+  // Order Item
+  const [itemEditModal, setItemEditModal] = useState(false);
+  const [userPatients, setUserPatients] = useState(null);
+  const [orderEditId, setOrderEditId] = useState(null);
+  const [addressId, setAddressId] = useState(null);
 
   useEffect(() => {
     axios
@@ -470,6 +477,32 @@ const OrderTable = ({ order }) => {
       });
   };
 
+  const handleTestItemModal = (order) => {
+    console.log(order);
+    setAddressId(
+      order.orderitem.length !== 0 && order.orderitem[0].address !== null
+        ? order.orderitem[0].address.id
+        : null
+    );
+    setOrderEditId(order.id);
+
+    axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/user_management/patient/?user=${order.user.id}`
+      )
+      .then((resp) => {
+        const results = resp.data.results;
+        // console.log(results);
+        setUserPatients(results);
+        setItemEditModal(true);
+      });
+  };
+
+  const testItemModalClose = () => {
+    getSingleOrderTree(orderEditId);
+    setItemEditModal(false);
+  };
+
   return (
     <>
       <tr>
@@ -621,19 +654,28 @@ const OrderTable = ({ order }) => {
         <td className='pl-3'>
           {mainOrder.orderitem.length !== 0 && (
             <p className='mb-0 font-weight-bold pr-2'>
-              {mainOrder.orderitem[0].address.mobile || ''}
-              <br /> {mainOrder.orderitem[0].address.email || ''}
+              {mainOrder.orderitem[0].address
+                ? mainOrder.orderitem[0].address.mobile
+                : ''}
+              <br />{' '}
+              {mainOrder.orderitem[0].address
+                ? mainOrder.orderitem[0].address.email
+                : ''}
             </p>
           )}
         </td>
         <td className='pl-3'>
           {mainOrder.orderitem.length !== 0 && (
             <p className='mb-0 font-weight-bold'>
-              {mainOrder.orderitem[0].address.address
+              {mainOrder.orderitem[0].address !== null
                 ? `${mainOrder.orderitem[0].address.address}, `
                 : ''}
-              {`${mainOrder.orderitem[0].address.thana}, `}
-              {mainOrder.orderitem[0].address.district}
+              {mainOrder.orderitem[0].address !== null
+                ? `${mainOrder.orderitem[0].address.thana}, `
+                : ''}
+              {mainOrder.orderitem[0].address !== null
+                ? `${mainOrder.orderitem[0].address.district}, `
+                : ''}
             </p>
           )}
         </td>
@@ -672,7 +714,10 @@ const OrderTable = ({ order }) => {
               <span className='text-dark-50'>৳ BDT 960</span> <br />
             </div> */}
             <div className='items mt-3'>
-              <button className='btn edit-order py-1 btn-primary'>
+              <button
+                className='btn edit-order py-1 btn-primary'
+                onClick={() => handleTestItemModal(mainOrder)}
+              >
                 Test Add
               </button>
               {/* <br />*{' '}
@@ -1079,6 +1124,16 @@ const OrderTable = ({ order }) => {
           </div>
         </ModalBody>
       </Modal>
+
+      <OrderItemEdit
+        itemEditModal={itemEditModal}
+        setItemEditModal={setItemEditModal}
+        userPatients={userPatients}
+        setUserPatients={setUserPatients}
+        addressId={addressId}
+        orderEditId={orderEditId}
+        testItemModalClose={testItemModalClose}
+      />
     </>
   );
 };

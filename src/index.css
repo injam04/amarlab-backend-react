@@ -528,6 +528,11 @@ button.edit-order {
   }
 }
 
+.aside-menu .menu-nav > .menu-item > .menu-link.active span.menu-text,
+.aside-menu .menu-nav > .menu-item > .menu-link.active span i {
+  color: #1bc5bd;
+}
+
 /* Delete Confirmation */
 .delete_confirmation .icon img {
   width: 100px;
