@@ -163,7 +163,7 @@ class EditUser extends Component {
                 <form onSubmit={this.handleSubmit}>
                   <div className='form-group row fv-plugins-icon-container'>
                     <label className='col-xl-3 col-lg-3 col-form-label'>
-                      Username
+                      Phone Number
                     </label>
                     <div className='col-lg-9 col-xl-9'>
                       <input
@@ -173,6 +173,7 @@ class EditUser extends Component {
                         onChange={(e) =>
                           this.setState({ username: e.target.value })
                         }
+                        placeholder='01XXXXXX'
                       />
                       <div className='fv-plugins-message-container' />
                     </div>

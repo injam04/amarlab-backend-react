@@ -111,8 +111,9 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
 
   const handleUserCreation = (e) => {
     e.preventDefault();
-    if (username.trim() === '') {
-      toast.error('Please enter a username', {
+    let numberPattern = /^01\d{9}$/;
+    if (!numberPattern.test(username)) {
+      toast.error('Please enter a valid mobile number', {
         autoClose: 3000,
       });
     } else if (password.trim() === '') {
@@ -268,7 +269,11 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
         autoClose: 3000,
       });
     } else if (sampleDate === '' || sampleDate === null) {
-      toast.error('Please select date.', {
+      toast.error('Please select a date.', {
+        autoClose: 3000,
+      });
+    } else if (sampleTime === '' || sampleTime === null) {
+      toast.error('Please select a time.', {
         autoClose: 3000,
       });
     } else {
@@ -497,7 +502,7 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                                   <div className='form-group mb-2 mt-2'>
                                     <input
                                       type='text'
-                                      placeholder='username'
+                                      placeholder='enter moblie number'
                                       value={username}
                                       onChange={(e) =>
                                         setUsername(e.target.value)
@@ -507,7 +512,7 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                                   <div className='form-group mb-2'>
                                     <input
                                       type='password'
-                                      placeholder='password'
+                                      placeholder='enter password'
                                       value={password}
                                       onChange={(e) =>
                                         setPassword(e.target.value)

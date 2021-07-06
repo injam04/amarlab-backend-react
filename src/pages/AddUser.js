@@ -35,9 +35,9 @@ class AddUser extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-
-    if (this.state.username.trim() === '') {
-      toast.error(`Please enter a username.`, {
+    let numberPattern = /^01\d{9}$/;
+    if (!numberPattern.test(this.state.username)) {
+      toast.error(`Please enter a valid phone number.`, {
         autoClose: 3000,
       });
     } else if (this.state.password.trim() === '') {
@@ -147,7 +147,7 @@ class AddUser extends Component {
                 <form onSubmit={this.handleSubmit}>
                   <div className='form-group row fv-plugins-icon-container'>
                     <label className='col-xl-3 col-lg-3 col-form-label'>
-                      Username
+                      Phone Number
                     </label>
                     <div className='col-lg-9 col-xl-9'>
                       <input
@@ -157,6 +157,7 @@ class AddUser extends Component {
                         onChange={(e) =>
                           this.setState({ username: e.target.value })
                         }
+                        placeholder='01XXXXXX'
                       />
                       <div className='fv-plugins-message-container' />
                     </div>

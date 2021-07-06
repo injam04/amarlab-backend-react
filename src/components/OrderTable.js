@@ -530,7 +530,7 @@ const OrderTable = ({ order }) => {
       )
       .then((resp) => {
         const items = resp.data.results;
-        console.log(items);
+        // console.log(items);
         const totalPrice = items.reduce((total, item) => {
           return (
             total +
@@ -538,7 +538,7 @@ const OrderTable = ({ order }) => {
             fees.meterial_fee
           );
         }, 0);
-        console.log(totalPrice);
+        // console.log(totalPrice);
 
         axios
           .put(
@@ -913,11 +913,18 @@ const OrderTable = ({ order }) => {
           {mainOrder.orderdelivery.length !== 0 ? (
             <>
               {mainOrder.orderdelivery.map((orderdelivery, i) => (
-                <p className='mb-0 font-weight-bold text-capitalize' key={i}>
-                  {_toSpace(orderdelivery.name)}
-                </p>
+                <div key={i} className='mb-2'>
+                  <p className='mb-0 font-weight-bold text-capitalize'>
+                    {_toSpace(orderdelivery.name)}
+                  </p>
+                  <p className='mb-0 font-weight-bold text-capitalize'>
+                    —{' '}
+                    {moment(orderdelivery.created_at).format(
+                      'DD MMM YYYY, h:mm A'
+                    )}
+                  </p>
+                </div>
               ))}{' '}
-              <br />
               <button
                 onClick={() => handleEditModal(mainOrder, 'orderdelivery')}
                 className='edit-order'

@@ -57,29 +57,29 @@ class Orders extends Component {
 
     let params = new URLSearchParams(this.props.location.search);
     let status = params.get('status');
-    let user = params.get('user');
+    let date = params.get('date');
 
     if (status) {
       axios
         .get(
-          `${process.env.REACT_APP_BASE_URL}/order/order-tree/?status=${status}&limit=${this.state.limit}&offset=${this.state.offset}&ofset=0&page=1`
+          `${process.env.REACT_APP_BASE_URL}/order/order-tree/?orderdetail__order_status=${status}&limit=${this.state.limit}&offset=${this.state.offset}&ofset=0&page=1`
         )
         .then((resp) => {
           // console.log(resp.data);
           this.setState({
-            users: [...this.state.orders, ...resp.data.results],
+            orders: [...this.state.orders, ...resp.data.results],
           });
           this.setState({ next: resp.data.next });
         });
-    } else if (user) {
+    } else if (date) {
       axios
         .get(
-          `${process.env.REACT_APP_BASE_URL}/order/order-tree/?user=${user}&limit=${this.state.limit}&offset=${this.state.offset}&ofset=0&page=1`
+          `${process.env.REACT_APP_BASE_URL}/order/order-tree/?date=${date}&limit=${this.state.limit}&offset=${this.state.offset}&ofset=0&page=1`
         )
         .then((resp) => {
           // console.log(resp.data);
           this.setState({
-            users: [...this.state.orders, ...resp.data.results],
+            orders: [...this.state.orders, ...resp.data.results],
           });
           this.setState({ next: resp.data.next });
         });
@@ -101,10 +101,11 @@ class Orders extends Component {
   filterByStatus = (value) => {
     axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/order/order-tree/?status=${value}&page=1&limit=8&ofset=0`
+        `${process.env.REACT_APP_BASE_URL}/order/order-tree/?orderdetail__order_status=${value}&page=1&limit=2&ofset=0`
       )
       .then((resp) => {
         // console.log(resp.data);
+        this.setState({ orders: [] });
         this.setState({ orders: resp.data.results });
         this.setState({ orderCount: resp.data.count });
         this.setState({ next: resp.data.next });
@@ -113,7 +114,7 @@ class Orders extends Component {
 
   handleByStatus = (e) => {
     // console.log(e.target.value);
-    this.setState({ offset: 8 });
+    this.setState({ offset: 2 });
     if (e.target.value === '') {
       this.props.history.push(`/orders`);
       this.fetchOrders();
@@ -127,10 +128,11 @@ class Orders extends Component {
   filterByDay = (value) => {
     axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/order/order-tree/?date=${value}&page=1&limit=8&ofset=0`
+        `${process.env.REACT_APP_BASE_URL}/order/order-tree/?date=${value}&page=1&limit=2&ofset=0`
       )
       .then((resp) => {
         // console.log(resp.data);
+        this.setState({ orders: [] });
         this.setState({ orders: resp.data.results });
         this.setState({ orderCount: resp.data.count });
         this.setState({ next: resp.data.next });
@@ -139,7 +141,7 @@ class Orders extends Component {
 
   handleByDay = (e) => {
     // console.log(e.target.value);
-    this.setState({ offset: 8 });
+    this.setState({ offset: 2 });
 
     if (e.target.value === '') {
       this.props.history.push(`/orders`);
@@ -189,10 +191,8 @@ class Orders extends Component {
                       onChange={this.handleByStatus}
                     >
                       <option value=''>Filter by Status</option>
-                      <option value='order_confirmed'>Order Confirmed</option>
-                      <option value='sample_collected'>Sample Collected</option>
-                      <option value='report_delivered'>Report Delivered</option>
-                      <option value='due_report'>Due Report</option>
+                      <option value='processing'>Processing</option>
+                      <option value='confirmed'>Confirmed</option>
                     </select>
                   </div>
                   <div className='col-md-6'>
@@ -200,7 +200,7 @@ class Orders extends Component {
                       className='form-control'
                       onChange={this.handleByDay}
                     >
-                      <option value=''>Filter by Day</option>
+                      <option value=''>Filter by Order Day</option>
                       <option value={moment(new Date()).format('YYYY-MM-DD')}>
                         Today
                       </option>

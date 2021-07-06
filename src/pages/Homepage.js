@@ -7,10 +7,12 @@ import OrderSvg from '../assets/img/ordsvg.svg';
 
 class Homepage extends Component {
   state = {
-    totalOrder: null,
-    totalPatient: null,
-    totalRevenue: null,
-    total: null,
+    today: moment().add(1, 'days').format('YYYY-MM-DD'),
+    yesterday: moment().subtract(1, 'days').format('YYYY-MM-DD'),
+    week: moment().subtract(6, 'days').format('YYYY-MM-DD'),
+    subTotal: null,
+    todayTotal: null,
+    weekTotal: null,
   };
 
   fetchTotal = () => {
@@ -18,33 +20,35 @@ class Homepage extends Component {
       .get(`${process.env.REACT_APP_BASE_URL}/order/order-summery`)
       .then((resp) => {
         // console.log(resp.data);
-        this.setState({ total: resp.data });
+        this.setState({ subTotal: resp.data });
       });
   };
 
   fetchToday = () => {
     axios
-      .post(`${process.env.REACT_APP_BASE_URL}/order/order-summery`, {
-        start: '2021-06-25',
-        end: '2021-07-01',
-      })
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/order/order-summery/${this.state.yesterday}/${this.state.today}`
+      )
       .then((resp) => {
-        console.log(resp.data);
-        // this.setState({ total: resp.data });
+        // console.log(resp.data);
+        this.setState({ todayTotal: resp.data });
       })
       .catch((error) => {
         console.log(error.response);
       });
   };
 
-  fetchPatients = () => {
+  fetchWeek = () => {
     axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/user_management/patient/?page=1&limit=1&ofset=0`
+        `${process.env.REACT_APP_BASE_URL}/order/order-summery/${this.state.week}/${this.state.today}`
       )
       .then((resp) => {
         // console.log(resp.data);
-        this.setState({ totalPatient: resp.data.count });
+        this.setState({ weekTotal: resp.data });
+      })
+      .catch((error) => {
+        console.log(error.response);
       });
   };
 
@@ -59,8 +63,8 @@ class Homepage extends Component {
         return config;
       });
       this.fetchTotal();
-      this.fetchPatients();
       this.fetchToday();
+      this.fetchWeek();
     }
   }
 
@@ -73,7 +77,7 @@ class Homepage extends Component {
   };
 
   render() {
-    const { totalOrder, totalPatient, totalRevenue, total } = this.state;
+    const { subTotal, todayTotal, weekTotal } = this.state;
 
     return (
       <div className='row homepage'>
@@ -90,7 +94,7 @@ class Homepage extends Component {
                       Total Orders
                     </p>
                     <p className='text-danger font-weight-bold font-size-h6'>
-                      {total ? `${this.addZero(total.order)}` : '00'}
+                      {subTotal ? `${this.addZero(subTotal.order)}` : '00'}
                     </p>
                   </div>
                 </div>
@@ -103,7 +107,7 @@ class Homepage extends Component {
                       Total Patients
                     </p>
                     <p className='text-success font-weight-bold font-size-h6'>
-                      {total ? `${this.addZero(total.patient)}` : '00'}
+                      {subTotal ? `${this.addZero(subTotal.patient)}` : '00'}
                     </p>
                   </div>
                 </div>
@@ -116,7 +120,7 @@ class Homepage extends Component {
                       Total Revenue (GMV)
                     </p>
                     <p className='text-warning font-weight-bold font-size-h6'>
-                      {total ? `${total.price}` : '00.00'}
+                      {subTotal ? `${subTotal.price}` : '00.00'}
                     </p>
                   </div>
                 </div>
@@ -144,7 +148,7 @@ class Homepage extends Component {
                       Orders
                     </p>
                     <p className='text-danger font-weight-bold font-size-h6'>
-                      {totalOrder ? `${this.addZero(totalOrder)}` : '00'}
+                      {todayTotal ? `${this.addZero(todayTotal.order)}` : '00'}
                     </p>
                   </div>
                 </div>
@@ -157,7 +161,9 @@ class Homepage extends Component {
                       Patients
                     </p>
                     <p className='text-success font-weight-bold font-size-h6'>
-                      {totalPatient ? `${this.addZero(totalPatient)}` : '00'}
+                      {todayTotal
+                        ? `${this.addZero(todayTotal.patient)}`
+                        : '00'}
                     </p>
                   </div>
                 </div>
@@ -170,7 +176,7 @@ class Homepage extends Component {
                       Revenue (GMV)
                     </p>
                     <p className='text-warning font-weight-bold font-size-h6'>
-                      {totalRevenue ? `${totalRevenue}.00` : '00.00'}
+                      {todayTotal ? `${todayTotal.price}` : '00.00'}
                     </p>
                   </div>
                 </div>
@@ -195,7 +201,7 @@ class Homepage extends Component {
                       Orders
                     </p>
                     <p className='text-danger font-weight-bold font-size-h6'>
-                      {totalOrder ? `${this.addZero(totalOrder)}` : '00'}
+                      {weekTotal ? `${this.addZero(weekTotal.order)}` : '00'}
                     </p>
                   </div>
                 </div>
@@ -208,7 +214,7 @@ class Homepage extends Component {
                       Patients
                     </p>
                     <p className='text-success font-weight-bold font-size-h6'>
-                      {totalPatient ? `${this.addZero(totalPatient)}` : '00'}
+                      {weekTotal ? `${this.addZero(weekTotal.patient)}` : '00'}
                     </p>
                   </div>
                 </div>
@@ -221,7 +227,7 @@ class Homepage extends Component {
                       Revenue (GMV)
                     </p>
                     <p className='text-warning font-weight-bold font-size-h6'>
-                      {totalRevenue ? `${totalRevenue}.00` : '00.00'}
+                      {weekTotal ? `${weekTotal.price}` : '00.00'}
                     </p>
                   </div>
                 </div>
