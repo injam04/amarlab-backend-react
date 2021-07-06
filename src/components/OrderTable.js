@@ -76,6 +76,9 @@ const OrderTable = ({ order }) => {
   const [addressId, setAddressId] = useState(null);
   const [orderUserId, setOrderUserId] = useState(null);
 
+  //Fees
+  const [fees, setFees] = useState(null);
+
   useEffect(() => {
     axios
       .get(
@@ -97,6 +100,10 @@ const OrderTable = ({ order }) => {
         // console.log(resp.data.results);
         setOrderManager(resp.data.results);
       });
+
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}/diagnostic/fees/`)
+      .then((resp) => setFees(resp.data.results[0]));
   }, []);
 
   const _toSpace = (string) => {
@@ -485,6 +492,9 @@ const OrderTable = ({ order }) => {
         // console.log(resp.data);
         // getSingleOrderTree(orderId);
         orderItemGet(orderId);
+        toast.success(`Test item removed successfully.`, {
+          autoClose: 3000,
+        });
       })
       .catch((error) => {
         console.log(error.response);
@@ -520,17 +530,21 @@ const OrderTable = ({ order }) => {
       )
       .then((resp) => {
         const items = resp.data.results;
-        // console.log(items);
+        console.log(items);
         const totalPrice = items.reduce((total, item) => {
-          return total + parseInt(item.purchasable_order_item.sell_price);
+          return (
+            total +
+            parseInt(item.purchasable_order_item.sell_price) +
+            fees.meterial_fee
+          );
         }, 0);
-        // console.log(totalPrice);
+        console.log(totalPrice);
 
         axios
           .put(
             `${process.env.REACT_APP_BASE_URL}/order/order-only/${orderEditId}/`,
             {
-              total_price: totalPrice,
+              total_price: totalPrice + fees.collection_fee,
             }
           )
           .then((resp) => {
@@ -549,6 +563,9 @@ const OrderTable = ({ order }) => {
     // setItemEditModal(false);
     setTimeout(() => {
       orderItemGet(orderEditId);
+      toast.success(`Test item added successfully.`, {
+        autoClose: 3000,
+      });
     }, 1000);
   };
 
@@ -1222,6 +1239,7 @@ const OrderTable = ({ order }) => {
         orderEditId={orderEditId}
         testItemModalClose={testItemModalClose}
         orderUserId={orderUserId}
+        fees={fees}
       />
     </>
   );

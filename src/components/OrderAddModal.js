@@ -1,6 +1,6 @@
 import axios from 'axios';
 import moment from 'moment';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, ModalBody } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import DateSelect from './DateSelect';
@@ -45,11 +45,16 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
   const [patientGender, setPatientGender] = useState('');
   const [patientDob, setPatientDob] = useState(null);
 
-  const getTotalPrice = (array) => {
-    // const price = array.reduce((total, item) => {
-    //   return total + parseInt(item.test_item.purchasable_order_item.sell_price);
-    // }, 0);
+  // Test Fees
+  const [fees, setFees] = useState(null);
 
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}/diagnostic/fees/`)
+      .then((resp) => setFees(resp.data.results[0]));
+  }, []);
+
+  const getTotalPrice = (array) => {
     const diagnosticrr = array.filter((diag) => {
       return diag.order_type === 'diagnostic';
     });
@@ -72,6 +77,36 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
     );
 
     return diagprice + packprice;
+  };
+
+  const getTotalPriceWithFees = (array) => {
+    const diagnosticrr = array.filter((diag) => {
+      return diag.order_type === 'diagnostic';
+    });
+
+    const packagerr = array.filter((diag) => {
+      return diag.order_type === 'package';
+    });
+
+    const diagprice = diagnosticrr.reduce(
+      (total, item) =>
+        total + parseInt(item.test_item.purchasable_order_item.sell_price),
+      0
+    );
+
+    const packprice = packagerr.reduce(
+      (total, item) =>
+        total +
+        parseInt(item.test_item.test_item.purchasable_order_item.sell_price),
+      0
+    );
+
+    return (
+      diagprice +
+      packprice +
+      fees.collection_fee +
+      orders.length * fees.meterial_fee
+    );
   };
 
   const handleUserCreation = (e) => {
@@ -208,6 +243,9 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
     // console.log([...orders, ...carts]);
     setShowTestModal(false);
     setOrderPatients([]);
+    toast.success('Test added successfully.', {
+      autoClose: 3000,
+    });
   };
 
   const handleOrderSave = () => {
@@ -254,6 +292,7 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
               patient: order.patient.id,
               order_type: order.order_type,
               address: resp.data.id,
+              meterial_fee: fees.meterial_fee,
               purchasable_order_item:
                 order.order_type === 'package'
                   ? `${order.test_item.test_item.purchasable_order_item.id}`
@@ -264,9 +303,10 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
           const postOrder = {
             user: userDetails.id,
             date: moment(sampleDate).format('YYYY-MM-DD'),
-            time: moment(sampleTime).format('hh:mm A'),
+            time: moment(sampleTime).format('hh:mm:ss'),
             orderitem: order_items,
-            total_price: getTotalPrice(orders),
+            total_price: getTotalPriceWithFees(orders),
+            collection_fee: fees.collection_fee,
           };
 
           axios
@@ -307,6 +347,9 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
   const handleDeleteOrder = (order) => {
     // console.log(order);
     setOrders(orders.filter((o) => o !== order));
+    toast.success('Test removed successfully.', {
+      autoClose: 3000,
+    });
   };
 
   const handleAddNewPatient = (e) => {
@@ -543,7 +586,9 @@ const OrderAddModal = ({ showAddModal, setShowAddModal }) => {
                       </td>
                     )}
                     {userDetails && (
-                      <td className='pl-3'>BDT {getTotalPrice(orders)}</td>
+                      <td className='pl-3'>
+                        BDT {getTotalPriceWithFees(orders)}
+                      </td>
                     )}
                     {orders.length !== 0 && (
                       <td className='pl-3'>

@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import OrderTable from '../components/OrderTable';
 import OrderAddModal from '../components/OrderAddModal';
+import moment from 'moment';
 
 class Orders extends Component {
   state = {
@@ -123,10 +124,10 @@ class Orders extends Component {
     }
   };
 
-  filterByUser = (value) => {
+  filterByDay = (value) => {
     axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/order/order-tree/?user=${value}&page=1&limit=8&ofset=0`
+        `${process.env.REACT_APP_BASE_URL}/order/order-tree/?date=${value}&page=1&limit=8&ofset=0`
       )
       .then((resp) => {
         // console.log(resp.data);
@@ -136,7 +137,7 @@ class Orders extends Component {
       });
   };
 
-  handleByUser = (e) => {
+  handleByDay = (e) => {
     // console.log(e.target.value);
     this.setState({ offset: 8 });
 
@@ -144,8 +145,8 @@ class Orders extends Component {
       this.props.history.push(`/orders`);
       this.fetchOrders();
     } else {
-      this.props.history.push(`/orders?user=${e.target.value}`);
-      this.filterByUser(e.target.value);
+      this.props.history.push(`/orders?date=${e.target.value}`);
+      this.filterByDay(e.target.value);
     }
   };
 
@@ -197,15 +198,13 @@ class Orders extends Component {
                   <div className='col-md-6'>
                     <select
                       className='form-control'
-                      onChange={this.handleByUser}
+                      onChange={this.handleByDay}
                     >
                       <option value=''>Filter by Day</option>
-                      {users &&
-                        users.map((user, i) => (
-                          <option value={user.id} key={i}>
-                            {user.username}
-                          </option>
-                        ))}
+                      <option value={moment(new Date()).format('YYYY-MM-DD')}>
+                        Today
+                      </option>
+                      <option value=''>All</option>
                     </select>
                   </div>
                 </div>

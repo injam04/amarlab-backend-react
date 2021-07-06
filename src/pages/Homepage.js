@@ -10,22 +10,31 @@ class Homepage extends Component {
     totalOrder: null,
     totalPatient: null,
     totalRevenue: null,
+    total: null,
   };
 
-  fetchOrders = () => {
-    axios.get(`${process.env.REACT_APP_BASE_URL}/order/order/`).then((resp) => {
-      this.setState({ totalOrder: resp.data.count });
-      const orders = resp.data.results;
-      const totalPrice = orders
-        .map((order) => {
-          return parseInt(order.total_price);
-        })
-        .reduce((total, price) => {
-          return total + price;
-        }, 0);
-      // console.log(totalPrice);
-      this.setState({ totalRevenue: totalPrice });
-    });
+  fetchTotal = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}/order/order-summery`)
+      .then((resp) => {
+        // console.log(resp.data);
+        this.setState({ total: resp.data });
+      });
+  };
+
+  fetchToday = () => {
+    axios
+      .post(`${process.env.REACT_APP_BASE_URL}/order/order-summery`, {
+        start: '2021-06-25',
+        end: '2021-07-01',
+      })
+      .then((resp) => {
+        console.log(resp.data);
+        // this.setState({ total: resp.data });
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
   };
 
   fetchPatients = () => {
@@ -49,8 +58,9 @@ class Homepage extends Component {
         config.headers.Authorization = tokehjjhhn;
         return config;
       });
-      this.fetchOrders();
+      this.fetchTotal();
       this.fetchPatients();
+      this.fetchToday();
     }
   }
 
@@ -63,7 +73,7 @@ class Homepage extends Component {
   };
 
   render() {
-    const { totalOrder, totalPatient, totalRevenue } = this.state;
+    const { totalOrder, totalPatient, totalRevenue, total } = this.state;
 
     return (
       <div className='row homepage'>
@@ -80,7 +90,7 @@ class Homepage extends Component {
                       Total Orders
                     </p>
                     <p className='text-danger font-weight-bold font-size-h6'>
-                      {totalOrder ? `${this.addZero(totalOrder)}` : '00'}
+                      {total ? `${this.addZero(total.order)}` : '00'}
                     </p>
                   </div>
                 </div>
@@ -93,7 +103,7 @@ class Homepage extends Component {
                       Total Patients
                     </p>
                     <p className='text-success font-weight-bold font-size-h6'>
-                      {totalPatient ? `${this.addZero(totalPatient)}` : '00'}
+                      {total ? `${this.addZero(total.patient)}` : '00'}
                     </p>
                   </div>
                 </div>
@@ -106,7 +116,7 @@ class Homepage extends Component {
                       Total Revenue (GMV)
                     </p>
                     <p className='text-warning font-weight-bold font-size-h6'>
-                      {totalRevenue ? `${totalRevenue}.00` : '00.00'}
+                      {total ? `${total.price}` : '00.00'}
                     </p>
                   </div>
                 </div>

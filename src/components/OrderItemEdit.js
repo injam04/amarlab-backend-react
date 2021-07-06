@@ -16,6 +16,7 @@ const OrderItemEdit = ({
   orderEditId,
   testItemModalClose,
   orderUserId,
+  fees,
 }) => {
   const [testType, setTestType] = useState('diagnostic');
   const [allLabs, setAllLabs] = useState([]);
@@ -95,6 +96,7 @@ const OrderItemEdit = ({
         patient: patient.id,
         order_type: labDetails.order_type,
         address: addressId,
+        meterial_fee: fees.meterial_fee,
         purchasable_order_item:
           labDetails.order_type === 'diagnostic'
             ? labDetails.purchasable_order_item.id

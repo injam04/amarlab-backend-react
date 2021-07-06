@@ -7,7 +7,7 @@ const TimeSelect = ({ sampleTime, setSampleTime }) => {
       selected={sampleTime}
       onChange={(date) => {
         setSampleTime(date);
-        console.log(moment(date).format('hh:mm A'));
+        console.log(moment(date).format('hh:mm:ss'));
       }}
       showTimeSelect
       showTimeSelectOnly
