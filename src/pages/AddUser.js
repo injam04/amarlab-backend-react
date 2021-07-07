@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 class AddUser extends Component {
@@ -25,7 +26,13 @@ class AddUser extends Component {
   };
 
   componentDidMount() {
-    this.fetchGroup();
+    const user_details = localStorage.getItem('user_details');
+    const userRole = JSON.parse(user_details);
+    if (userRole.groups[0].name !== 'Admin') {
+      this.props.history.push('/order');
+    } else {
+      this.fetchGroup();
+    }
   }
 
   handleRole = (e) => {
@@ -279,8 +286,16 @@ class AddUser extends Component {
                       />
                     </div>
                   </div> */}
-                  <div className='d-flex justify-content-between border-top pt-10 mt-15'>
-                    <div className='mr-2'></div>
+                  <div className='d-flex justify-content-end border-top pt-10 mt-15'>
+                    <div>
+                      <Link
+                        to='/users'
+                        type='submit'
+                        className='btn btn-success font-weight-bolder px-9 py-4 mr-3'
+                      >
+                        Go Back
+                      </Link>
+                    </div>
                     <div>
                       <button
                         type='submit'

@@ -40,7 +40,7 @@ class MyProfile extends Component {
     } else {
       const user_details = localStorage.getItem('user_details');
       const user = JSON.parse(user_details);
-      const id = user.pk;
+      const id = user.id;
 
       const ajaxPut = (data) => {
         axios
@@ -84,7 +84,7 @@ class MyProfile extends Component {
     const user_details = localStorage.getItem('user_details');
     if (user_details) {
       const user = JSON.parse(user_details);
-      this.fetchUsers(user.pk);
+      this.fetchUsers(user.id);
     } else {
       console.log('Logout');
     }

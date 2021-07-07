@@ -52,7 +52,7 @@ class Users extends Component {
     const user_details = localStorage.getItem('user_details');
     if (user_details) {
       const user = JSON.parse(user_details);
-      this.setState({ user_id: user.pk });
+      this.setState({ user_id: user.id });
     }
   }
 

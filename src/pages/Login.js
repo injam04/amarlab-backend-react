@@ -31,15 +31,22 @@ class Login extends Component {
           .get(`${process.env.REACT_APP_BASE_URL}/auth/user/`)
           .then((resp) => {
             // console.log(resp.data);
-            setUserDetails(resp.data);
-            localStorage.setItem('user_details', JSON.stringify(resp.data));
+            // setUserDetails(resp.data);
+            // localStorage.setItem('user_details', JSON.stringify(resp.data));
 
             axios
               .get(
-                `${process.env.REACT_APP_BASE_URL}/user_management/user/${resp.data.pk}`
+                `${process.env.REACT_APP_BASE_URL}/user_management/user-get/${resp.data.pk}`
               )
               .then((resp) => {
-                // console.log(resp.data.is_superuser);
+                // console.log(
+                //   resp.data.groups.length !== 0
+                //     ? resp.data.groups[0].name
+                //     : 'User'
+                // );
+                console.log(resp.data);
+                setUserDetails(resp.data);
+                localStorage.setItem('user_details', JSON.stringify(resp.data));
                 localStorage.setItem(
                   'is_superuser',
                   JSON.stringify(resp.data.is_superuser)

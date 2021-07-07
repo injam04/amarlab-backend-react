@@ -1,5 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 class EditUser extends Component {
@@ -27,7 +28,7 @@ class EditUser extends Component {
 
   componentDidMount() {
     const token = localStorage.getItem('token');
-    const is_superuser = localStorage.getItem('is_superuser');
+    const user_details = localStorage.getItem('user_details');
     if (!token) {
       this.props.history.push('/login');
     } else {
@@ -37,8 +38,13 @@ class EditUser extends Component {
         return config;
       });
 
-      if (JSON.parse(is_superuser) === false) {
-        this.props.history.push('/');
+      const userRole = JSON.parse(user_details);
+      const checkGroup = userRole.groups.length === 0 ? 'no group' : 'group';
+      console.log(checkGroup);
+      if (userRole.groups.length === 0) {
+        this.props.history.push('/login');
+      } else if (userRole.groups[0].name !== 'Admin') {
+        this.props.history.push('/login');
       } else {
         this.fetchGroup();
         const params = this.props.match.params.id;
@@ -278,8 +284,16 @@ class EditUser extends Component {
                       />
                     </div>
                   </div>
-                  <div className='d-flex justify-content-between border-top pt-10 mt-15'>
-                    <div className='mr-2'></div>
+                  <div className='d-flex justify-content-end border-top pt-10 mt-15'>
+                    <div>
+                      <Link
+                        to='/users'
+                        type='submit'
+                        className='btn btn-success font-weight-bolder px-9 py-4 mr-3'
+                      >
+                        Go Back
+                      </Link>
+                    </div>
                     <div>
                       <button
                         type='submit'

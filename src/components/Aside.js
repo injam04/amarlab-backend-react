@@ -5,7 +5,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const Aside = ({ asideOpen, setAsideClose }) => {
-  const { is_superuser } = useContext(AuthContext);
+  const { user_details } = useContext(AuthContext);
   const [isHomeActive, setIsHomeActive] = useState(false);
   const location = useLocation();
 
@@ -62,19 +62,23 @@ const Aside = ({ asideOpen, setAsideClose }) => {
                         <span className='menu-text'>Orders</span>
                       </NavLink>
                     </li>
-                    {is_superuser && (
-                      <li className='menu-item'>
-                        <NavLink
-                          to='/users'
-                          className='menu-link'
-                          onClick={() => setAsideClose()}
-                        >
-                          <span className='svg-icon menu-icon'>
-                            <i className='fas fa-users' />
-                          </span>
-                          <span className='menu-text'>Users</span>
-                        </NavLink>
-                      </li>
+                    {user_details && user_details.groups.length !== 0 && (
+                      <>
+                        {user_details.groups[0].name === 'Admin' && (
+                          <li className='menu-item'>
+                            <NavLink
+                              to='/users'
+                              className='menu-link'
+                              onClick={() => setAsideClose()}
+                            >
+                              <span className='svg-icon menu-icon'>
+                                <i className='fas fa-users' />
+                              </span>
+                              <span className='menu-text'>Users</span>
+                            </NavLink>
+                          </li>
+                        )}
+                      </>
                     )}
 
                     {/* <li className='menu-item'>
