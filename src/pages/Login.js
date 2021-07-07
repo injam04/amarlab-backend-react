@@ -23,7 +23,7 @@ class Login extends Component {
       .then((resp) => {
         // console.log(resp.data);
         localStorage.setItem('token', JSON.stringify(resp.data.key));
-        this.props.history.push('/orders');
+        // this.props.history.push('/orders');
         handleIsLoggedIn(true, resp.data.key);
         interceptor(resp.data.key);
 
@@ -52,6 +52,7 @@ class Login extends Component {
                   JSON.stringify(resp.data.is_superuser)
                 );
                 setIsSuperuser(resp.data.is_superuser);
+                this.props.history.push('/orders');
               });
           });
       })

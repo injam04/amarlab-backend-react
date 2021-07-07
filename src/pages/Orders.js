@@ -13,6 +13,9 @@ class Orders extends Component {
     limit: 2,
     users: null,
     showAddModal: false,
+    allAccess: false,
+    rolePaginate: null,
+    roleId: null,
   };
 
   fetchUsers = () => {
@@ -37,8 +40,35 @@ class Orders extends Component {
       });
   };
 
+  fetchUserOrders = (id) => {
+    axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/order/order-tree/?user=${id}&page=1&limit=2&ofset=0`
+      )
+      .then((resp) => {
+        // console.log(resp.data.results);
+        this.setState({ orders: resp.data.results });
+        this.setState({ orderCount: resp.data.count });
+        this.setState({ next: resp.data.next });
+      });
+  };
+
+  fetchMtOrders = (id) => {
+    axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/order/order-tree/?orderdetail__mt=${id}&page=1&limit=2&ofset=0`
+      )
+      .then((resp) => {
+        // console.log(resp.data.results);
+        this.setState({ orders: resp.data.results });
+        this.setState({ orderCount: resp.data.count });
+        this.setState({ next: resp.data.next });
+      });
+  };
+
   componentDidMount() {
     const token = localStorage.getItem('token');
+    const user_details = localStorage.getItem('user_details');
     if (!token) {
       this.props.history.push('/login');
     } else {
@@ -47,8 +77,29 @@ class Orders extends Component {
         config.headers.Authorization = tokehjjhhn;
         return config;
       });
-      this.fetchOrders();
-      this.fetchUsers();
+
+      const userRole = JSON.parse(user_details);
+      if (userRole.groups.length === 0) {
+        // console.log('User');
+        this.fetchUserOrders(userRole.id);
+        this.setState({ rolePaginate: 'user' });
+        this.setState({ roleId: userRole.id });
+      } else if (userRole.groups[0].name === 'User') {
+        // console.log('User');
+        this.fetchUserOrders(userRole.id);
+        this.setState({ rolePaginate: 'user' });
+        this.setState({ roleId: userRole.id });
+      } else if (userRole.groups[0].name === 'Medical Technologist') {
+        // console.log('Medical Technologist');
+        this.fetchMtOrders(userRole.id);
+        this.setState({ rolePaginate: 'mt' });
+        this.setState({ roleId: userRole.id });
+      } else {
+        // console.log('Show all');
+        this.setState({ allAccess: true });
+        this.fetchOrders();
+        this.fetchUsers();
+      }
     }
   }
 
@@ -75,6 +126,30 @@ class Orders extends Component {
       axios
         .get(
           `${process.env.REACT_APP_BASE_URL}/order/order-tree/?date=${date}&limit=${this.state.limit}&offset=${this.state.offset}&ofset=0&page=1`
+        )
+        .then((resp) => {
+          // console.log(resp.data);
+          this.setState({
+            orders: [...this.state.orders, ...resp.data.results],
+          });
+          this.setState({ next: resp.data.next });
+        });
+    } else if (this.state.rolePaginate === 'user') {
+      axios
+        .get(
+          `${process.env.REACT_APP_BASE_URL}/order/order-tree/?user=${this.state.roleId}&limit=${this.state.limit}&offset=${this.state.offset}&ofset=0&page=1`
+        )
+        .then((resp) => {
+          // console.log(resp.data);
+          this.setState({
+            orders: [...this.state.orders, ...resp.data.results],
+          });
+          this.setState({ next: resp.data.next });
+        });
+    } else if (this.state.rolePaginate === 'mt') {
+      axios
+        .get(
+          `${process.env.REACT_APP_BASE_URL}/order/order-tree/?orderdetail__mt=${this.state.roleId}&limit=${this.state.limit}&offset=${this.state.offset}&ofset=0&page=1`
         )
         .then((resp) => {
           // console.log(resp.data);
@@ -158,7 +233,8 @@ class Orders extends Component {
   };
 
   render() {
-    const { orders, orderCount, next, users, showAddModal } = this.state;
+    const { orders, orderCount, next, users, showAddModal, allAccess } =
+      this.state;
 
     return (
       <>
@@ -174,40 +250,44 @@ class Orders extends Component {
                     Total orders {orderCount || 0}
                   </span>
                 </h3>
-                <div className='card-toolbar'>
-                  <button
-                    onClick={(e) => this.setShowAddModal(e, true)}
-                    className='btn btn-primary'
-                  >
-                    Add Order
-                  </button>
-                </div>
+                {allAccess && (
+                  <div className='card-toolbar'>
+                    <button
+                      onClick={(e) => this.setShowAddModal(e, true)}
+                      className='btn btn-primary'
+                    >
+                      Add Order
+                    </button>
+                  </div>
+                )}
               </div>
               <div className='card-body pt-2 pb-0 mt-n3'>
-                <div className='row pt-4'>
-                  <div className='col-md-6'>
-                    <select
-                      className='form-control'
-                      onChange={this.handleByStatus}
-                    >
-                      <option value=''>Filter by Status</option>
-                      <option value='processing'>Processing</option>
-                      <option value='confirmed'>Confirmed</option>
-                    </select>
+                {allAccess && (
+                  <div className='row pt-4'>
+                    <div className='col-md-6'>
+                      <select
+                        className='form-control'
+                        onChange={this.handleByStatus}
+                      >
+                        <option value=''>Filter by Status</option>
+                        <option value='processing'>Processing</option>
+                        <option value='confirmed'>Confirmed</option>
+                      </select>
+                    </div>
+                    <div className='col-md-6'>
+                      <select
+                        className='form-control'
+                        onChange={this.handleByDay}
+                      >
+                        <option value=''>Filter by Order Day</option>
+                        <option value={moment(new Date()).format('YYYY-MM-DD')}>
+                          Today
+                        </option>
+                        <option value=''>All</option>
+                      </select>
+                    </div>
                   </div>
-                  <div className='col-md-6'>
-                    <select
-                      className='form-control'
-                      onChange={this.handleByDay}
-                    >
-                      <option value=''>Filter by Order Day</option>
-                      <option value={moment(new Date()).format('YYYY-MM-DD')}>
-                        Today
-                      </option>
-                      <option value=''>All</option>
-                    </select>
-                  </div>
-                </div>
+                )}
                 <div className='row'>
                   <div className='col-md-12 order-history'>
                     <div className='table-responsive'>
@@ -243,7 +323,11 @@ class Orders extends Component {
                         <tbody>
                           {orders &&
                             orders.map((order, i) => (
-                              <OrderTable key={i} order={order} />
+                              <OrderTable
+                                key={i}
+                                order={order}
+                                allAccess={allAccess}
+                              />
                             ))}
                           {/* <OrderTable /> */}
                         </tbody>

@@ -6,11 +6,11 @@ import { Modal, ModalBody } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import OrderItemEdit from './OrderItemEdit';
 
-const OrderTable = ({ order }) => {
+const OrderTable = ({ order, allAccess }) => {
   const [mainOrder, setMainOrder] = useState(order);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [users, setUsers] = useState(null);
   const [orderManager, setOrderManager] = useState(null);
+  const [medicalTechnologist, setMedicalTechnologist] = useState(null);
 
   const [shownItemName, setShownItemName] = useState('');
 
@@ -82,23 +82,20 @@ const OrderTable = ({ order }) => {
   useEffect(() => {
     axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/user_management/user/?page=1&limit=1000000&ofset=0`
-      )
-      .then((resp) => {
-        // console.log(resp.data.results);
-        setUsers(resp.data.results);
-      })
-      .catch((error) => {
-        console.log(error.response);
-      });
-
-    axios
-      .get(
         `${process.env.REACT_APP_BASE_URL}/user_management/user/?groups__name=Order%20Manager&page=1&limit=1000000&ofset=0`
       )
       .then((resp) => {
         // console.log(resp.data.results);
         setOrderManager(resp.data.results);
+      });
+
+    axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/user_management/user/?groups__name=Medical%20Technologist&page=1&limit=1000000&ofset=0`
+      )
+      .then((resp) => {
+        // console.log(resp.data.results);
+        setMedicalTechnologist(resp.data.results);
       });
 
     axios
@@ -598,22 +595,28 @@ const OrderTable = ({ order }) => {
                 >
                   {mainOrder.orderdetail.order_status} <br />
                 </span>
-                <button
-                  onClick={() => handleEditModal(mainOrder, 'order_status')}
-                  className='edit-order'
-                >
-                  <i className='far fa-edit'></i>
-                  Edit
-                </button>
+                {allAccess && (
+                  <button
+                    onClick={() => handleEditModal(mainOrder, 'order_status')}
+                    className='edit-order'
+                  >
+                    <i className='far fa-edit'></i>
+                    Edit
+                  </button>
+                )}
               </>
             ) : (
-              <button
-                onClick={() => handleEditModal(mainOrder, 'order_status')}
-                className='add-order'
-              >
-                <i className='fas fa-plus'></i>
-                Add
-              </button>
+              <>
+                {allAccess && (
+                  <button
+                    onClick={() => handleEditModal(mainOrder, 'order_status')}
+                    className='add-order'
+                  >
+                    <i className='fas fa-plus'></i>
+                    Add
+                  </button>
+                )}
+              </>
             )}
           </p>
         </td>
@@ -1052,8 +1055,8 @@ const OrderTable = ({ order }) => {
                           onChange={(e) => setMt(e.target.value)}
                         >
                           <option value=''>Select medical technologist</option>
-                          {users &&
-                            users.map((user, i) => (
+                          {medicalTechnologist &&
+                            medicalTechnologist.map((user, i) => (
                               <option value={user.id} key={i}>
                                 {user.username}
                               </option>
