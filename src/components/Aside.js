@@ -8,6 +8,7 @@ const Aside = ({ asideOpen, setAsideClose }) => {
   const { user_details } = useContext(AuthContext);
   const [isHomeActive, setIsHomeActive] = useState(false);
   const location = useLocation();
+  // const [showHome, setShowHome] = useState(true);
 
   useEffect(() => {
     if (location.pathname === '/') {
@@ -15,6 +16,17 @@ const Aside = ({ asideOpen, setAsideClose }) => {
     } else {
       setIsHomeActive(false);
     }
+
+    // const user_details = localStorage.getItem('user_details');
+    // if (user_details) {
+    //   const userRole = JSON.parse(user_details);
+    //   console.log(userRole.groups);
+    //   if (userRole.groups.length === 0) {
+    //     setShowHome(false);
+    //   } else {
+    //     setShowHome(true);
+    //   }
+    // }
   }, [location]);
 
   return (
@@ -38,18 +50,42 @@ const Aside = ({ asideOpen, setAsideClose }) => {
               >
                 <div className='aside-menu min-h-lg-800px' id='kt_aside_menu'>
                   <ul className='menu-nav'>
-                    <li className='menu-item'>
-                      <Link
-                        to='/'
-                        className={`${isHomeActive ? 'active' : ''} menu-link`}
-                        onClick={() => setAsideClose()}
-                      >
-                        <span className='svg-icon menu-icon'>
-                          <i className='fas fa-home' />
-                        </span>
-                        <span className='menu-text'>Overview</span>
-                      </Link>
-                    </li>
+                    {user_details && user_details.groups.length !== 0 && (
+                      <>
+                        {user_details.groups[0].name === 'Admin' && (
+                          <li className='menu-item'>
+                            <Link
+                              to='/'
+                              className={`${
+                                isHomeActive ? 'active' : ''
+                              } menu-link`}
+                              onClick={() => setAsideClose()}
+                            >
+                              <span className='svg-icon menu-icon'>
+                                <i className='fas fa-home' />
+                              </span>
+                              <span className='menu-text'>Overview</span>
+                            </Link>
+                          </li>
+                        )}
+                        {user_details.groups[0].name === 'Order Manager' && (
+                          <li className='menu-item'>
+                            <Link
+                              to='/'
+                              className={`${
+                                isHomeActive ? 'active' : ''
+                              } menu-link`}
+                              onClick={() => setAsideClose()}
+                            >
+                              <span className='svg-icon menu-icon'>
+                                <i className='fas fa-home' />
+                              </span>
+                              <span className='menu-text'>Overview</span>
+                            </Link>
+                          </li>
+                        )}
+                      </>
+                    )}
                     <li className='menu-item'>
                       <NavLink
                         to='/orders'

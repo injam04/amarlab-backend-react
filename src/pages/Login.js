@@ -44,7 +44,7 @@ class Login extends Component {
                 //     ? resp.data.groups[0].name
                 //     : 'User'
                 // );
-                console.log(resp.data);
+                // console.log(resp.data);
                 setUserDetails(resp.data);
                 localStorage.setItem('user_details', JSON.stringify(resp.data));
                 localStorage.setItem(
@@ -105,7 +105,7 @@ class Login extends Component {
   componentDidMount() {
     const token = localStorage.getItem('token');
     if (token) {
-      this.props.history.push('/');
+      this.props.history.push('/orders');
     }
   }
 

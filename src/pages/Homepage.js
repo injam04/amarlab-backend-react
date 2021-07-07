@@ -54,6 +54,7 @@ class Homepage extends Component {
 
   componentDidMount() {
     const token = localStorage.getItem('token');
+    const user_details = localStorage.getItem('user_details');
     if (!token) {
       this.props.history.push('/login');
     } else {
@@ -62,9 +63,21 @@ class Homepage extends Component {
         config.headers.Authorization = tokehjjhhn;
         return config;
       });
-      this.fetchTotal();
-      this.fetchToday();
-      this.fetchWeek();
+
+      const userRole = JSON.parse(user_details);
+      if (userRole.groups.length === 0) {
+        this.props.history.push('/orders');
+      } else if (
+        userRole.groups[0].name === 'Medical Technologist' ||
+        userRole.groups[0].name === 'User'
+      ) {
+        // console.log(userRole.groups[0].name);
+        this.props.history.push('/orders');
+      } else {
+        this.fetchTotal();
+        this.fetchToday();
+        this.fetchWeek();
+      }
     }
   }
 

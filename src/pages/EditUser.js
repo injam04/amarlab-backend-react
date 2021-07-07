@@ -39,12 +39,12 @@ class EditUser extends Component {
       });
 
       const userRole = JSON.parse(user_details);
-      const checkGroup = userRole.groups.length === 0 ? 'no group' : 'group';
-      console.log(checkGroup);
+      // const checkGroup = userRole.groups.length === 0 ? 'no group' : 'group';
+      // console.log(checkGroup);
       if (userRole.groups.length === 0) {
-        this.props.history.push('/login');
+        this.props.history.push('/orders');
       } else if (userRole.groups[0].name !== 'Admin') {
-        this.props.history.push('/login');
+        this.props.history.push('/orders');
       } else {
         this.fetchGroup();
         const params = this.props.match.params.id;
